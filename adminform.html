@@ -9,7 +9,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
     <style>
-        /* ===== TODOS LOS ESTILOS (incluidos los que ya tenías) ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
         body { background: #1a1a1a; min-height: 100vh; padding: 0.8rem 0.5rem; color: #e8e8e8; }
         .container { max-width: 1200px; margin: 0 auto; }
@@ -355,7 +354,7 @@
     <div class="modal-overlay" id="rescheduleModal">
         <div class="modal-container">
             <h2><i class="fas fa-calendar-alt" style="color: #d4af37;"></i> Reagendar Reserva</h2>
-            <div class="subtitle">Selecciona un nuevo horario para la reserva</div>
+            <div class="subtitle">Selecciona un nuevo horario para la reserva (hasta 40 días después de la fecha original)</div>
             <form id="rescheduleForm">
                 <input type="hidden" id="rescheduleId">
                 <div class="form-group">
@@ -825,7 +824,7 @@
                 );
             };
 
-            window.reactivate = async function(id) {
+            window.reactivate = function(id) {
                 showConfirmModal('¿Reactivar esta reserva?', 'Reactivar reserva', async function() {
                     try {
                         await db.collection('citas').doc(id).update({ estado: 'ACTIVA' });
@@ -836,7 +835,7 @@
                 });
             };
 
-            // ===== REAGENDAR =====
+            // ===== REAGENDAR (con rango de 40 días desde la fecha original) =====
             window.openRescheduleModal = function(id) {
                 const reserva = allReservations.find(r => r.id === id);
                 if (!reserva) return alert('Reserva no encontrada');
@@ -853,9 +852,27 @@
 
             async function populateAvailableSlots(excludeId) {
                 const select = document.getElementById('rescheduleSlot');
-                select.innerHTML = '<option value="">Cargando...</option>';
+                select.innerHTML = '<option value="">Cargando horarios...</option>';
                 try {
+                    const reserva = allReservations.find(r => r.id === excludeId);
+                    if (!reserva) {
+                        select.innerHTML = '<option value="">Error: reserva no encontrada</option>';
+                        return;
+                    }
                     const now = new Date();
+                    const fechaReserva = parseReservaDate(reserva.fecha, reserva.hora);
+                    if (!fechaReserva) {
+                        select.innerHTML = '<option value="">Error: fecha inválida</option>';
+                        return;
+                    }
+
+                    // Inicio: la fecha de la reserva original o hoy (la que sea más tarde)
+                    let startDate = new Date(Math.max(fechaReserva.getTime(), now.getTime()));
+                    startDate.setHours(0,0,0,0);
+                    const endDate = new Date(startDate);
+                    endDate.setDate(endDate.getDate() + 40); // 40 días después del inicio
+
+                    // Obtener reservas ocupadas (excepto la actual)
                     const snapshot = await db.collection('citas').get();
                     const ocupados = new Set();
                     snapshot.forEach(doc => {
@@ -865,33 +882,38 @@
                             ocupados.add(data.fecha + ' ' + data.hora);
                         }
                     });
+
                     const options = [];
-                    const today = new Date();
-                    for (let d=0; d<14; d++) {
-                        const date = new Date(today);
-                        date.setDate(date.getDate() + d);
-                        const dayNum = String(date.getDate()).padStart(2,'0');
-                        const dayName = LONG_DAYS[date.getDay()].substring(0,3);
-                        const dayLabel = dayName + ' ' + dayNum;
-                        const hourSlots = allHours.filter(h => {
-                            if (d===0) {
-                                const nowH = now.getHours();
-                                if (h < nowH) return false;
-                                if (h === nowH && now.getMinutes() >= 30) return false;
-                            }
-                            return true;
-                        });
-                        hourSlots.forEach(h => {
-                            const horaStr = String(h).padStart(2,'0') + ':00';
-                            const key = dayLabel + ' ' + horaStr;
-                            if (!ocupados.has(key)) {
-                                options.push({ label: key, value: key });
-                            }
-                        });
+                    const current = new Date(startDate);
+                    while (current <= endDate) {
+                        const dow = current.getDay();
+                        if (dow >= 1 && dow <= 6) { // Lun a Sáb
+                            const dayNum = String(current.getDate()).padStart(2,'0');
+                            const dayName = LONG_DAYS[dow].substring(0,3);
+                            const dayLabel = dayName + ' ' + dayNum;
+                            // Filtrar horas que ya pasaron si es hoy
+                            const hourSlots = allHours.filter(h => {
+                                if (current.toDateString() === now.toDateString()) {
+                                    const nowH = now.getHours();
+                                    if (h < nowH) return false;
+                                    if (h === nowH && now.getMinutes() >= 30) return false;
+                                }
+                                return true;
+                            });
+                            hourSlots.forEach(h => {
+                                const horaStr = String(h).padStart(2,'0') + ':00';
+                                const key = dayLabel + ' ' + horaStr;
+                                if (!ocupados.has(key)) {
+                                    options.push({ label: key, value: key });
+                                }
+                            });
+                        }
+                        current.setDate(current.getDate() + 1);
                     }
+
                     select.innerHTML = '';
                     if (options.length === 0) {
-                        select.innerHTML = '<option value="">No hay horarios disponibles</option>';
+                        select.innerHTML = '<option value="">No hay horarios disponibles en los próximos 40 días</option>';
                         return;
                     }
                     options.forEach(opt => {
@@ -1272,7 +1294,6 @@
                     closeRescheduleModal();
                     closeChangePasswordModal();
                     closeServiceModal();
-                    // Confirm modal se maneja por separado
                 }
             });
 
