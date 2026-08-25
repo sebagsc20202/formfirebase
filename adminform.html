@@ -167,7 +167,7 @@
         .btn-change-password { background: #f39c12; color: #1a1a1a; border: none; border-radius: 4px; padding: 0.25rem 0.8rem; cursor: pointer; font-size: 0.7rem; transition: 0.15s; }
         .btn-change-password:hover { background: #e67e22; box-shadow: 0 0 8px rgba(243, 156, 18, 0.5); }
 
-        /* ESTILOS CALENDARIO EN MODAL - MEJORADOS */
+        /* ESTILOS CALENDARIO EN MODAL - ALINEACIÓN CORREGIDA */
         .calendar-container {
             background: #1f1f1f;
             border-radius: 4px;
@@ -180,8 +180,9 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.7rem;
-            min-width: 350px; /* Ajustado para 6 columnas */
+            min-width: 400px;
             background: transparent;
+            table-layout: fixed; /* Para forzar anchos iguales */
         }
         .calendar-container th {
             background: #2a2a2a;
@@ -191,6 +192,10 @@
             text-align: center;
             border-bottom: 2px solid #3a3a3a;
             font-size: 0.65rem;
+            width: 14%; /* Aproximadamente 1/6 para 6 días */
+        }
+        .calendar-container th:first-child {
+            width: 12%; /* Columna de horas */
         }
         .calendar-container td {
             padding: 0.1rem 0.05rem;
@@ -204,6 +209,7 @@
             background: #262626;
             font-size: 0.65rem;
             padding: 0.05rem 0.02rem;
+            text-align: center;
         }
         .calendar-container .slot-cell {
             position: relative;
@@ -211,7 +217,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 100%;
         }
+        /* Radio buttons libres: verde */
         .calendar-container .slot-cell input[type="radio"] {
             appearance: none;
             width: 14px;
@@ -223,7 +231,7 @@
             transition: 0.15s;
             background: #2a2a2a;
             position: relative;
-            margin: 0;
+            margin: 0 auto; /* Centrado horizontal */
             flex-shrink: 0;
         }
         .calendar-container .slot-cell input[type="radio"]:not(:disabled):not(:checked) {
@@ -259,6 +267,7 @@
             border-color: #3a3a3a;
             background: #1a1a1a;
         }
+        /* Celda ocupada: fondo rojo y X */
         .calendar-container .reserved-cell {
             background: #3a1a1a !important;
             position: relative;
@@ -281,6 +290,7 @@
             background: #1a1a1a !important;
             pointer-events: none !important;
         }
+        /* Día pasado: fondo gris y sin interacción */
         .calendar-container .past-day {
             background: #222 !important;
             opacity: 0.5;
@@ -293,6 +303,7 @@
             color: #555;
             font-size: 0.8rem;
         }
+        /* Navegación */
         .calendar-container .week-nav {
             display: flex;
             justify-content: center;
@@ -340,7 +351,7 @@
             .dashboard-content { flex-direction: column; }
             .dashboard-content > * { flex: 1 1 100%; }
             .modal-container { padding: 1rem; max-width: 95%; }
-            .calendar-container table { font-size: 0.6rem; min-width: 280px; }
+            .calendar-container table { font-size: 0.6rem; min-width: 320px; }
             .calendar-container .slot-cell { height: 20px; }
         }
     </style>
@@ -510,11 +521,11 @@
         </div>
     </div>
 
-    <!-- MODAL REAGENDAR (con calendario mejorado - sin domingo) -->
+    <!-- MODAL REAGENDAR (con calendario) -->
     <div class="modal-overlay" id="rescheduleModal">
         <div class="modal-container">
             <h2><i class="fas fa-calendar-alt" style="color: #d4af37;"></i> Reagendar Reserva</h2>
-            <div class="subtitle">Selecciona un nuevo horario (solo días futuros, de lunes a sábado, hasta 40 días después de hoy)</div>
+            <div class="subtitle">Selecciona un nuevo horario (solo días futuros, hasta 40 días después de hoy. Los domingos no se muestran)</div>
             <form id="rescheduleForm">
                 <input type="hidden" id="rescheduleId">
                 <div class="form-group">
@@ -1003,7 +1014,7 @@
             };
 
             // ============================================================
-            //  REAGENDAR CON CALENDARIO MEJORADO (SIN DOMINGO)
+            //  REAGENDAR CON CALENDARIO (sin domingos y alineado)
             // ============================================================
             window.openRescheduleModal = function(id) {
                 const reserva = allReservations.find(r => r.id === id);
@@ -1071,12 +1082,18 @@
                 const hoy = new Date();
                 hoy.setHours(0,0,0,0);
 
-                // Construir tabla: solo días de Lunes a Sábado (getDay() !== 0)
+                let html = '';
+                html += `<div class="week-nav">
+                    <button id="calendarPrev" ${canPrev ? '' : 'disabled'}><i class="fas fa-chevron-left"></i> Ant.</button>
+                    <span class="week-label">${formatWeekLabel(weekStart)}</span>
+                    <button id="calendarNext" ${canNext ? '' : 'disabled'}>Sig. <i class="fas fa-chevron-right"></i></button>
+                </div>`;
+
+                // Construir tabla: solo días que estén dentro del rango y que sean >= hoy, excluyendo domingo
                 const days = [];
                 for (let d = new Date(weekStart); d <= weekEnd; d.setDate(d.getDate() + 1)) {
                     if (d < calendarData.startDate || d > calendarData.endDate) continue;
-                    // Excluir domingo (getDay() === 0)
-                    if (d.getDay() === 0) continue;
+                    if (d.getDay() === 0) continue; // EXCLUIR DOMINGO
                     const isPastDay = d < hoy;
                     const dayNum = String(d.getDate()).padStart(2,'0');
                     const dayName = LONG_DAYS[d.getDay()].substring(0,3);
@@ -1086,19 +1103,6 @@
                         isPastDay: isPastDay
                     });
                 }
-
-                // Si no hay días en esta semana (ej. solo domingos), mostramos mensaje
-                if (days.length === 0) {
-                    container.innerHTML = `<div style="text-align:center;color:#888;padding:1rem;">No hay días disponibles en esta semana</div>`;
-                    return;
-                }
-
-                let html = '';
-                html += `<div class="week-nav">
-                    <button id="calendarPrev" ${canPrev ? '' : 'disabled'}><i class="fas fa-chevron-left"></i> Ant.</button>
-                    <span class="week-label">${formatWeekLabel(weekStart)}</span>
-                    <button id="calendarNext" ${canNext ? '' : 'disabled'}>Sig. <i class="fas fa-chevron-right"></i></button>
-                </div>`;
 
                 html += `<div class="table-responsive"><table>`;
                 // Cabecera
