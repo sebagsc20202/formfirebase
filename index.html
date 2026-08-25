@@ -5,25 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Firebase SDKs (compat v9) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
     <style>
-        /* ===== ESTILOS BASE ===== */
+        /* ===== RESET Y BASE MÍNIMA ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        html, body {
+            height: 100%;
+            overflow: hidden; /* Sin scroll en ningún lado */
         }
         body {
             background: #1a1a1a;
-            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 2rem 1rem;
+            padding: 0.3rem; /* Mínimo */
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
@@ -34,214 +36,220 @@
         .card {
             max-width: 1200px;
             width: 100%;
+            height: 100vh;
+            max-height: 100vh;
             background: #2a2a2a;
-            border-radius: 8px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            padding: 2rem;
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            padding: 0.3rem 0.5rem; /* Mínimo */
             border: 1px solid #3a3a3a;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
+        /* ===== HEADER ===== */
         h1 {
-            font-size: 1.9rem;
+            font-size: clamp(1rem, 1.8vw, 1.5rem);
             font-weight: 600;
             color: #e8e8e8;
-            margin-bottom: 0.3rem;
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
+            gap: 6px;
+            flex-shrink: 0;
+            margin-bottom: 0.1rem;
         }
         h1 i { color: #d4af37; }
         .update-indicator {
             display: none;
             align-items: center;
-            gap: 6px;
-            font-size: 0.75rem;
-            color: #999999;
-            font-weight: 400;
-            letter-spacing: 0.3px;
-            padding: 0.2rem 0.8rem;
+            gap: 3px;
+            font-size: 0.55rem;
+            color: #999;
+            padding: 0.05rem 0.4rem;
             background: #262626;
-            border-radius: 4px;
+            border-radius: 3px;
             border: 1px solid #3a3a3a;
         }
         .update-indicator.show { display: inline-flex; }
         .update-indicator i {
-            font-size: 0.8rem;
+            font-size: 0.6rem;
             color: #d4af37;
             animation: clockPulse 1.2s ease-in-out infinite;
         }
-        .update-indicator span {
-            font-size: 0.7rem;
-            color: #aaaaaa;
-        }
         @keyframes clockPulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.85); }
+            0%,100%{opacity:1;transform:scale(1)}
+            50%{opacity:0.4;transform:scale(0.85)}
         }
 
+        /* ===== COOKIE NOTICE ===== */
         .cookie-notice {
-            background: #333333;
-            border: 1px solid #444444;
-            border-radius: 4px;
-            padding: 0.6rem 1rem;
-            margin-bottom: 1rem;
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 3px;
+            padding: 0.15rem 0.5rem;
+            margin-bottom: 0.15rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.8rem;
+            gap: 0.2rem;
+            flex-shrink: 0;
         }
-        .cookie-notice p { color: #c0c0c0; font-size: 0.85rem; margin: 0; }
-        .cookie-notice p i { color: #888888; margin-right: 8px; }
+        .cookie-notice p {
+            color: #c0c0c0;
+            font-size: clamp(0.5rem, 0.7vw, 0.65rem);
+            margin: 0;
+        }
+        .cookie-notice p i { color: #888; margin-right: 4px; }
         .cookie-notice .cookie-btn {
-            background: #444444;
-            border: 1px solid #555555;
+            background: #444;
+            border: 1px solid #555;
             color: #e0e0e0;
-            padding: 0.3rem 1rem;
-            border-radius: 4px;
+            padding: 0.05rem 0.5rem;
+            border-radius: 3px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: clamp(0.45rem, 0.6vw, 0.55rem);
             transition: 0.15s;
         }
-        .cookie-notice .cookie-btn:hover { background: #555555; border-color: #666666; }
+        .cookie-notice .cookie-btn:hover { background: #555; border-color: #666; }
 
+        /* ===== NAVEGACIÓN ===== */
         .week-navigation {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
-            margin-bottom: 0.5rem;
+            gap: 0.3rem;
+            margin-bottom: 0.1rem;
             flex-wrap: wrap;
             justify-content: space-between;
+            flex-shrink: 0;
         }
-        .week-nav-buttons { display: flex; gap: 0.4rem; }
+        .week-nav-buttons { display: flex; gap: 0.2rem; }
         .week-nav-buttons button {
-            background: #333333;
-            border: 1px solid #444444;
-            border-radius: 4px;
-            padding: 0.25rem 0.8rem;
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 3px;
+            padding: 0.05rem 0.4rem;
             font-weight: 500;
             color: #d0d0d0;
             cursor: pointer;
-            transition: 0.15s;
-            font-size: 0.8rem;
+            font-size: clamp(0.5rem, 0.7vw, 0.65rem);
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 2px;
         }
-        .week-nav-buttons button:hover { background: #3d3d3d; border-color: #555555; }
-        .week-nav-buttons button i { font-size: 0.7rem; color: #888888; }
+        .week-nav-buttons button:hover { background: #3d3d3d; border-color: #555; }
+        .week-nav-buttons button i { font-size: 0.5rem; color: #888; }
         .week-label {
             font-weight: 600;
             color: #e0e0e0;
-            background: #333333;
-            padding: 0.2rem 0.8rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            border: 1px solid #444444;
+            background: #333;
+            padding: 0.05rem 0.5rem;
+            border-radius: 3px;
+            font-size: clamp(0.55rem, 0.8vw, 0.7rem);
+            border: 1px solid #444;
         }
 
+        /* ===== MENSAJE DE SELECCIÓN ===== */
         .selected-display {
             background: #1f1f1f;
-            padding: 0.4rem 1rem;
-            border-radius: 4px;
-            font-size: 0.9rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 3px;
+            font-size: clamp(0.55rem, 0.8vw, 0.7rem);
             color: #b0b0b0;
-            border: 1px solid #444444;
+            border: 1px solid #444;
             display: none;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin-bottom: 0.7rem;
+            gap: 4px;
+            margin-bottom: 0.1rem;
             width: 100%;
-            text-align: center;
-            min-height: 36px;
+            min-height: 22px;
+            flex-shrink: 0;
         }
-        .selected-display.show {
-            display: flex;
-        }
+        .selected-display.show { display: flex; }
         .selected-display i {
             color: #4caf50;
-            font-size: 1rem;
+            font-size: clamp(0.6rem, 0.8vw, 0.7rem);
         }
         .selected-display .selected-text {
             color: #e0e0e0;
             font-weight: 500;
             background: #2d2d2d;
-            padding: 0 0.6rem;
-            border-radius: 4px;
+            padding: 0 0.3rem;
+            border-radius: 3px;
             border: 1px solid #3d3d3d;
         }
-        .selected-display .label-text {
-            color: #9a9a9a;
-            font-weight: 400;
-        }
 
+        /* ===== LAYOUT DOS COLUMNAS ===== */
         .two-column-layout {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.2rem;
-            align-items: stretch;
-            margin-top: 0.2rem;
+            gap: 0.5rem;
+            flex: 1 1 auto;
+            min-height: 0;
+            margin-top: 0.05rem;
         }
         .left-col {
             flex: 2;
-            min-width: 300px;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
         }
         .right-col {
             flex: 1;
-            min-width: 240px;
+            min-width: 180px;
             display: flex;
             flex-direction: column;
         }
 
+        /* ===== TABLA MÁS COMPACTA ===== */
         .table-responsive {
             overflow-x: auto;
-            border-radius: 4px;
+            border-radius: 3px;
             border: 1px solid #3a3a3a;
-            background: #222222;
+            background: #222;
+            flex: 1 1 auto;
+            min-height: 0;
             scrollbar-width: none;
             -ms-overflow-style: none;
-            height: 100%;
         }
-        .table-responsive::-webkit-scrollbar {
-            display: none;
-        }
+        .table-responsive::-webkit-scrollbar { display: none; }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.75rem;
-            min-width: 450px;
-            background: #222222;
+            font-size: clamp(0.6rem, 0.8vw, 0.7rem);
+            min-width: 340px;
+            background: #222;
         }
         th {
             background: #2a2a2a;
             color: #d0d0d0;
             font-weight: 600;
-            padding: 0.25rem 0.3rem;
+            padding: 0.1rem 0.15rem;
             text-align: center;
-            border-bottom: 2px solid #3a3a3a;
-            font-size: 0.7rem;
+            border-bottom: 1.5px solid #3a3a3a;
+            font-size: clamp(0.5rem, 0.7vw, 0.6rem);
         }
-        th:first-child { min-width: 50px; padding: 0.25rem 0.1rem; }
+        th:first-child { min-width: 35px; padding: 0.1rem 0.05rem; }
         th.today-header { background: #3d3d3d; position: relative; }
         th.today-header::after {
             content: '●';
-            color: #aaaaaa;
-            font-size: 0.4rem;
-            margin-left: 2px;
+            color: #aaa;
+            font-size: 0.35rem;
+            margin-left: 1px;
             vertical-align: super;
         }
         td {
-            padding: 0.25rem 0.1rem;
+            padding: 0.08rem 0.05rem;
             text-align: center;
-            border-bottom: 1px solid #333333;
+            border-bottom: 1px solid #333;
             vertical-align: middle;
         }
         td.today-cell { background: #383838; }
         td.available-cell { background: #2d2d2d; }
-        td.disabled-cell { background: #222222; opacity: 0.6; }
+        td.disabled-cell { background: #222; opacity: 0.6; }
         td.reserved-cell {
             background: #3a2a2a !important;
             opacity: 0.9 !important;
@@ -254,7 +262,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: #ff4444;
-            font-size: 0.8rem;
+            font-size: 0.65rem;
             font-weight: bold;
             opacity: 0.9;
         }
@@ -272,26 +280,26 @@
             font-weight: 500;
             color: #c0c0c0;
             background: #262626;
-            font-size: 0.7rem;
-            padding: 0.1rem 0.02rem;
+            font-size: clamp(0.5rem, 0.7vw, 0.6rem);
+            padding: 0.05rem 0.02rem;
         }
-        .time-slot i { margin-right: 2px; color: #777777; font-size: 0.65rem; }
+        .time-slot i { margin-right: 1px; color: #777; font-size: 0.5rem; }
         .slot-cell {
             position: relative;
-            height: 30px;
+            height: 22px; /* Mínimo */
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .slot-cell input[type="radio"] {
             appearance: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #555555;
+            width: 12px;
+            height: 12px;
+            border: 1.5px solid #555;
             border-radius: 50%;
             outline: none;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: 0.15s;
             background: #2a2a2a;
             position: relative;
             margin: 0;
@@ -300,27 +308,27 @@
         .slot-cell input[type="radio"]:not(:disabled):not(:checked) {
             border-color: #4caf50;
             background: #4caf50;
-            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+            box-shadow: 0 0 6px rgba(76,175,80,0.3);
         }
         .slot-cell input[type="radio"]:not(:disabled):not(:checked):hover {
             border-color: #66bb6a;
             background: #66bb6a;
-            box-shadow: 0 0 12px rgba(76, 175, 80, 0.5);
+            box-shadow: 0 0 10px rgba(76,175,80,0.5);
         }
-        .slot-cell input[type="radio"]:not(:disabled) { border-color: #666666; background: #333333; }
-        .slot-cell input[type="radio"]:not(:disabled):hover { border-color: #999999; background: #3d3d3d; }
+        .slot-cell input[type="radio"]:not(:disabled) { border-color: #666; background: #333; }
+        .slot-cell input[type="radio"]:not(:disabled):hover { border-color: #999; background: #3d3d3d; }
         .slot-cell input[type="radio"]:checked {
-            border-color: #aaaaaa;
-            background-color: #aaaaaa;
-            box-shadow: 0 0 0 3px rgba(170, 170, 170, 0.2);
+            border-color: #aaa;
+            background-color: #aaa;
+            box-shadow: 0 0 0 3px rgba(170,170,170,0.2);
         }
         .slot-cell input[type="radio"]:checked::after {
             content: '';
             position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 6px;
-            height: 6px;
+            top: 2px;
+            left: 2px;
+            width: 5px;
+            height: 5px;
             background: #1a1a1a;
             border-radius: 50%;
         }
@@ -334,21 +342,22 @@
             background: #282828;
             font-weight: 500;
             color: #b0b0b0;
-            letter-spacing: 0.5px;
-            padding: 0.15rem 0.02rem;
-            border-bottom: 2px solid #3a3a3a;
-            font-size: 0.6rem;
+            letter-spacing: 0.3px;
+            padding: 0.08rem 0.02rem;
+            border-bottom: 1.5px solid #3a3a3a;
+            font-size: clamp(0.4rem, 0.55vw, 0.5rem);
             text-transform: uppercase;
         }
-        .afternoon-row td:first-child { text-align: right; padding-right: 3px; font-weight: 600; }
+        .afternoon-row td:first-child { text-align: right; padding-right: 2px; font-weight: 600; }
 
+        /* ===== FORMULARIO COMPACTO ===== */
         .right-col .form-grid {
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
+            gap: 0.25rem;
             background: #262626;
-            padding: 0.8rem 1rem;
-            border-radius: 4px;
+            padding: 0.3rem 0.5rem;
+            border-radius: 3px;
             border: 1px solid #353535;
             height: 100%;
             justify-content: space-between;
@@ -356,80 +365,81 @@
         .field-group {
             display: flex;
             flex-direction: column;
-            gap: 0.15rem;
+            gap: 0.05rem;
             width: 100%;
         }
         .field-group label {
             font-weight: 500;
-            font-size: 0.75rem;
+            font-size: clamp(0.45rem, 0.6vw, 0.55rem);
             text-transform: uppercase;
-            letter-spacing: 0.03em;
-            color: #999999;
+            letter-spacing: 0.02em;
+            color: #999;
         }
-        .field-group label i { color: #777777; margin-right: 4px; }
+        .field-group label i { color: #777; margin-right: 2px; }
         .field-group input, .field-group select {
-            padding: 0.4rem 0.6rem;
+            padding: 0.15rem 0.3rem;
             border: 1px solid #3d3d3d;
             border-radius: 2px;
-            font-size: 0.85rem;
+            font-size: clamp(0.65rem, 0.8vw, 0.75rem);
             background: #1e1e1e;
-            transition: 0.2s;
             outline: none;
             width: 100%;
             color: #e0e0e0;
-            height: 34px;
+            height: 26px; /* Reducido */
         }
-        .field-group input::placeholder { color: #666666; font-weight: 300; }
+        .field-group input::placeholder { color: #666; font-weight: 300; }
         .field-group input:focus, .field-group select:focus {
-            border-color: #888888;
-            box-shadow: 0 0 0 3px rgba(136, 136, 136, 0.12);
+            border-color: #888;
+            box-shadow: 0 0 0 2px rgba(136,136,136,0.12);
         }
         .field-group select option { background: #1e1e1e; }
-        .field-group .hint { font-size: 0.6rem; color: #666666; margin-top: 1px; }
+        .field-group .hint {
+            font-size: clamp(0.4rem, 0.5vw, 0.45rem);
+            color: #666;
+            margin-top: 0px;
+        }
 
         .btn-wrapper {
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            gap: 0.15rem;
+            gap: 0.05rem;
             width: 100%;
             margin-top: auto;
         }
         .btn-wrapper .btn-label {
             font-weight: 500;
-            font-size: 0.75rem;
+            font-size: 0.5rem;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
             color: transparent;
             visibility: hidden;
-            line-height: 1.2;
+            line-height: 1;
         }
         .btn-submit {
             background: linear-gradient(135deg, #e5c147 0%, #d4af37 50%, #b8941f 100%);
             border: 1px solid #8b7424;
             color: #1a1a1a;
-            padding: 0.4rem 1rem;
-            border-radius: 4px;
+            padding: 0.15rem 0.5rem;
+            border-radius: 3px;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: clamp(0.6rem, 0.75vw, 0.7rem);
             cursor: pointer;
-            transition: 0.2s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3), 0 2px 4px rgba(0, 0, 0, 0.4);
+            gap: 3px;
+            box-shadow: 0 2px 8px rgba(212,175,55,0.25);
             width: 100%;
-            height: 34px;
-            min-height: 34px;
+            height: 26px;
+            min-height: 26px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
         .btn-submit:hover {
             background: linear-gradient(135deg, #f0d060 0%, #e5c147 50%, #d4af37 100%);
             border-color: #d4af37;
-            transform: scale(1.03);
-            box-shadow: 0 6px 18px rgba(212, 175, 55, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(212,175,55,0.4);
         }
         .btn-submit:disabled {
             opacity: 0.5;
@@ -437,246 +447,112 @@
             transform: none;
             box-shadow: none;
         }
-        .btn-submit i { font-size: 0.75rem; color: #1a1a1a; }
+        .btn-submit i { font-size: 0.6rem; color: #1a1a1a; }
 
-        .popup-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(8px);
-            padding: 1.5rem;
-        }
+        /* ===== POPUP (sin cambios) ===== */
+        .popup-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(6px); padding:1.5rem; }
         .popup-overlay.show { display: flex; }
         .popup-container {
             background: #2a2a2a;
-            border-radius: 8px;
-            border: 1px solid #444444;
-            padding: 2rem 2.5rem;
-            max-width: 480px;
-            width: 100%;
-            max-height: 90vh;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-            animation: popupFadeIn 0.4s ease;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            border-radius: 6px;
+            border: 1px solid #444;
+            padding: 1.5rem 2rem;
+            max-width: 450px;
+            width:100%;
+            max-height: 85vh;
+            box-shadow:0 20px 60px rgba(0,0,0,0.8);
+            animation:popupFadeIn 0.3s ease;
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
         }
         @keyframes popupFadeIn {
-            from { opacity: 0; transform: scale(0.9) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+            from{opacity:0;transform:scale(0.95) translateY(10px)}
+            to{opacity:1;transform:scale(1) translateY(0)}
         }
-        .popup-container .popup-header { flex-shrink: 0; }
-        .popup-container .popup-icon { text-align: center; font-size: 3rem; color: #4caf50; margin-bottom: 0.3rem; }
-        .popup-container h2 { color: #e8e8e8; text-align: center; font-size: 1.3rem; margin-bottom: 0.3rem; }
-        .popup-container .popup-subtitle {
-            color: #9a9a9a;
-            text-align: center;
-            font-size: 0.8rem;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #3a3a3a;
-            padding-bottom: 0.6rem;
-        }
-        .popup-container .popup-body {
-            flex: 1 1 auto;
-            overflow-y: auto;
-            padding-right: 0.3rem;
-            margin-right: -0.3rem;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        .popup-container .popup-body::-webkit-scrollbar {
-            display: none;
-        }
-        .popup-container .popup-details {
-            background: #222222;
-            border-radius: 4px;
-            padding: 0.8rem 1rem;
-            margin-bottom: 0.8rem;
-            border: 1px solid #353535;
-        }
-        .popup-container .popup-details .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.2rem 0;
-            border-bottom: 1px solid #333333;
-            color: #c0c0c0;
-            font-size: 0.8rem;
-        }
-        .popup-container .popup-details .detail-row:last-child { border-bottom: none; }
-        .popup-container .popup-details .detail-row .label { color: #888888; font-weight: 500; }
-        .popup-container .popup-details .detail-row .value {
-            color: #e0e0e0;
-            font-weight: 400;
-            text-align: right;
-            max-width: 60%;
-            word-break: break-word;
-        }
-        .popup-container .popup-notice {
-            background: #2a1a1a;
-            border-left: 3px solid #f44336;
-            padding: 0.4rem 0.6rem;
-            border-radius: 2px;
-            margin-bottom: 0.8rem;
-            font-size: 0.75rem;
-            color: #d0a0a0;
-        }
-        .popup-container .popup-notice i { color: #f44336; margin-right: 4px; }
-        .popup-container .popup-notice strong { color: #f0c0c0; }
-        .popup-container .popup-whatsapp {
-            background: #1a2a1a;
-            border: 1px solid #2a4a2a;
-            border-radius: 4px;
-            padding: 0.4rem 0.6rem;
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #a0c0a0;
-            font-size: 0.75rem;
-        }
-        .popup-container .popup-whatsapp i { color: #25d366; font-size: 1.1rem; flex-shrink: 0; }
-        .popup-container .popup-whatsapp .whatsapp-number { color: #c0e0c0; font-weight: 500; }
-        .popup-container .popup-footer {
-            flex-shrink: 0;
-            padding-top: 0.3rem;
-            border-top: 1px solid #353535;
-        }
-        .popup-container .popup-close-btn {
-            background: #444444;
-            border: 1px solid #555555;
-            color: #e8e8e8;
-            padding: 0.4rem 1.2rem;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.15s;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-top: 0.3rem;
-        }
-        .popup-container .popup-close-btn:hover { background: #555555; border-color: #666666; }
+        .popup-container .popup-header{flex-shrink:0}
+        .popup-container .popup-icon{text-align:center;font-size:2.5rem;color:#4caf50;margin-bottom:0.2rem}
+        .popup-container h2{color:#e8e8e8;text-align:center;font-size:1.2rem;margin-bottom:0.2rem}
+        .popup-container .popup-subtitle{color:#9a9a9a;text-align:center;font-size:0.75rem;margin-bottom:0.8rem;border-bottom:1px solid #3a3a3a;padding-bottom:0.5rem}
+        .popup-container .popup-body{flex:1;overflow-y:auto;padding-right:0.3rem;margin-right:-0.3rem;scrollbar-width:none;-ms-overflow-style:none}
+        .popup-container .popup-body::-webkit-scrollbar{display:none}
+        .popup-container .popup-details{background:#222;border-radius:3px;padding:0.6rem 0.8rem;margin-bottom:0.6rem;border:1px solid #353535}
+        .popup-container .popup-details .detail-row{display:flex;justify-content:space-between;padding:0.15rem 0;border-bottom:1px solid #333;color:#c0c0c0;font-size:0.75rem}
+        .popup-container .popup-details .detail-row:last-child{border-bottom:none}
+        .popup-container .popup-details .detail-row .label{color:#888;font-weight:500}
+        .popup-container .popup-details .detail-row .value{color:#e0e0e0;text-align:right;max-width:60%;word-break:break-word}
+        .popup-container .popup-notice{background:#2a1a1a;border-left:3px solid #f44336;padding:0.3rem 0.5rem;border-radius:2px;margin-bottom:0.6rem;font-size:0.7rem;color:#d0a0a0}
+        .popup-container .popup-notice i{color:#f44336;margin-right:3px}
+        .popup-container .popup-notice strong{color:#f0c0c0}
+        .popup-container .popup-whatsapp{background:#1a2a1a;border:1px solid #2a4a2a;border-radius:3px;padding:0.3rem 0.5rem;margin-bottom:0.6rem;display:flex;align-items:center;gap:5px;color:#a0c0a0;font-size:0.7rem}
+        .popup-container .popup-whatsapp i{color:#25d366;font-size:1rem;flex-shrink:0}
+        .popup-container .popup-footer{flex-shrink:0;padding-top:0.3rem;border-top:1px solid #353535}
+        .popup-container .popup-close-btn{background:#444;border:1px solid #555;color:#e8e8e8;padding:0.3rem 1rem;border-radius:3px;font-weight:600;font-size:0.75rem;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:4px;margin-top:0.2rem}
+        .popup-container .popup-close-btn:hover{background:#555;border-color:#666}
 
-        @media (max-width: 1024px) {
-            .card { padding: 1.5rem; }
-            .two-column-layout { gap: 1rem; }
-        }
-
+        /* ===== RESPONSIVE (mínimos) ===== */
         @media (max-width: 768px) {
-            .two-column-layout {
-                flex-direction: column;
-                gap: 0.8rem;
-            }
-            .left-col, .right-col {
-                flex: 1 1 100%;
-                min-width: 0;
-            }
-            .right-col .form-grid {
-                padding: 0.8rem;
-                gap: 0.5rem;
-                height: auto;
-            }
-            .card { padding: 1rem 0.6rem 1rem; }
-            table { font-size: 0.7rem; min-width: 380px; }
-            th { padding: 0.2rem 0.15rem; font-size: 0.65rem; }
-            th:first-child { min-width: 40px; padding: 0.2rem 0.1rem; }
-            td { padding: 0.2rem 0.08rem; }
-            .slot-cell { height: 26px; }
-            .slot-cell input[type="radio"] { width: 14px; height: 14px; }
-            .time-slot { font-size: 0.65rem; }
-            .afternoon-row td { font-size: 0.55rem; padding: 0.1rem 0.02rem; }
-            h1 { font-size: 1.3rem; }
-            .update-indicator { font-size: 0.6rem; padding: 0.1rem 0.5rem; }
-            .week-navigation { flex-direction: column; align-items: stretch; gap: 0.3rem; }
-            .week-nav-buttons { justify-content: center; }
-            .week-label { font-size: 0.75rem; padding: 0.15rem 0.6rem; }
-            .cookie-notice { flex-direction: column; align-items: stretch; text-align: center; padding: 0.4rem 0.6rem; gap: 0.4rem; }
-            .cookie-notice .cookie-btn { width: 100%; font-size: 0.75rem; padding: 0.25rem 0.6rem; }
-            .selected-display {
-                font-size: 0.8rem;
-                padding: 0.3rem 0.6rem;
-                flex-wrap: wrap;
-                gap: 4px;
-                min-height: 32px;
-            }
-            .popup-container { padding: 1.5rem 1.2rem; max-height: 90vh; }
-            .popup-container .popup-details .detail-row { font-size: 0.75rem; flex-direction: column; align-items: flex-start; gap: 0.1rem; }
-            .popup-container .popup-details .detail-row .value { text-align: left; max-width: 100%; }
+            .card { padding: 0.2rem 0.3rem; }
+            .two-column-layout { flex-direction: column; gap: 0.3rem; }
+            .left-col, .right-col { flex: 1 1 auto; min-width: 0; }
+            .right-col .form-grid { padding: 0.2rem 0.3rem; gap: 0.15rem; }
+            table { font-size: clamp(0.5rem, 1.2vw, 0.6rem); min-width: 280px; }
+            th { padding: 0.05rem 0.1rem; font-size: clamp(0.45rem, 0.9vw, 0.5rem); }
+            td { padding: 0.05rem 0.03rem; }
+            .slot-cell { height: 18px; }
+            .slot-cell input[type="radio"] { width: 10px; height: 10px; }
+            .time-slot { font-size: clamp(0.4rem, 0.9vw, 0.5rem); }
+            .afternoon-row td { font-size: clamp(0.35rem, 0.7vw, 0.4rem); padding: 0.05rem 0.02rem; }
+            .field-group input, .field-group select { height: 22px; font-size: clamp(0.55rem, 1vw, 0.65rem); padding: 0.1rem 0.2rem; }
+            .btn-submit { height: 22px; font-size: clamp(0.5rem, 0.8vw, 0.6rem); }
+            h1 { font-size: clamp(0.8rem, 2.5vw, 1.1rem); }
+            .week-nav-buttons button { font-size: clamp(0.4rem, 0.8vw, 0.5rem); padding: 0.03rem 0.3rem; }
+            .week-label { font-size: clamp(0.4rem, 0.8vw, 0.5rem); padding: 0.03rem 0.3rem; }
+            .selected-display { font-size: clamp(0.45rem, 0.8vw, 0.55rem); min-height: 18px; padding: 0.05rem 0.3rem; }
+            .cookie-notice p { font-size: clamp(0.4rem, 0.6vw, 0.5rem); }
+            .cookie-notice .cookie-btn { font-size: clamp(0.35rem, 0.5vw, 0.45rem); padding: 0.03rem 0.3rem; }
+            .popup-container { padding: 1rem 1.2rem; max-width: 95%; }
         }
 
         @media (max-width: 480px) {
-            .card { padding: 0.5rem 0.3rem 0.6rem; border-radius: 4px; }
-            table { font-size: 0.6rem; min-width: 320px; }
-            th { padding: 0.15rem 0.1rem; font-size: 0.55rem; }
-            th:first-child { min-width: 30px; padding: 0.15rem 0.05rem; }
-            td { padding: 0.15rem 0.05rem; }
-            .slot-cell { height: 22px; }
-            .slot-cell input[type="radio"] { width: 12px; height: 12px; }
-            .time-slot { font-size: 0.55rem; padding: 0.05rem 0.02rem; }
-            .afternoon-row td { font-size: 0.5rem; padding: 0.08rem 0.02rem; }
-            .right-col .form-grid { padding: 0.5rem; gap: 0.4rem; border-radius: 4px; }
-            .field-group input, .field-group select { padding: 0.3rem 0.4rem; font-size: 0.75rem; height: 30px; }
-            .field-group label { font-size: 0.65rem; }
-            .field-group .hint { font-size: 0.55rem; }
-            .btn-submit { height: 30px; font-size: 0.75rem; padding: 0.2rem 0.6rem; min-height: 30px; border-radius: 4px; }
-            h1 { font-size: 1rem; }
-            .update-indicator { font-size: 0.5rem; padding: 0.05rem 0.4rem; gap: 3px; }
-            .week-label { font-size: 0.65rem; padding: 0.1rem 0.5rem; }
-            .week-nav-buttons button { font-size: 0.6rem; padding: 0.15rem 0.5rem; gap: 3px; }
-            .cookie-notice p { font-size: 0.7rem; }
-            .cookie-notice .cookie-btn { font-size: 0.65rem; padding: 0.2rem 0.5rem; }
-            .selected-display {
-                font-size: 0.7rem;
-                padding: 0.2rem 0.5rem;
-                min-height: 28px;
-                gap: 3px;
-            }
-            .selected-display .selected-text { padding: 0 0.3rem; font-size: 0.65rem; }
-            .popup-container { padding: 1rem 0.8rem; border-radius: 4px; max-height: 92vh; max-width: 95%; }
-            .popup-container h2 { font-size: 1rem; }
-            .popup-container .popup-icon { font-size: 2.5rem; }
-            .popup-container .popup-subtitle { font-size: 0.7rem; }
-            .popup-container .popup-details { padding: 0.6rem 0.8rem; }
-            .popup-container .popup-details .detail-row { font-size: 0.7rem; padding: 0.2rem 0; }
-            .popup-container .popup-notice { font-size: 0.7rem; padding: 0.4rem 0.6rem; }
-            .popup-container .popup-whatsapp { font-size: 0.7rem; padding: 0.4rem 0.6rem; }
-            .popup-container .popup-close-btn { font-size: 0.75rem; padding: 0.4rem 1rem; }
+            .card { padding: 0.1rem 0.15rem; }
+            table { font-size: clamp(0.4rem, 1vw, 0.5rem); min-width: 220px; }
+            th { padding: 0.03rem 0.05rem; font-size: clamp(0.35rem, 0.7vw, 0.4rem); }
+            td { padding: 0.03rem 0.02rem; }
+            .slot-cell { height: 16px; }
+            .slot-cell input[type="radio"] { width: 8px; height: 8px; border-width: 1px; }
+            .time-slot { font-size: clamp(0.35rem, 0.7vw, 0.4rem); padding: 0.03rem 0.02rem; }
+            .afternoon-row td { font-size: clamp(0.3rem, 0.55vw, 0.35rem); }
+            .field-group input, .field-group select { height: 20px; font-size: clamp(0.45rem, 0.8vw, 0.55rem); }
+            .btn-submit { height: 20px; font-size: clamp(0.4rem, 0.7vw, 0.5rem); }
+            .right-col .form-grid { padding: 0.15rem 0.2rem; gap: 0.1rem; }
+            .popup-container { padding: 0.8rem 1rem; }
         }
     </style>
 </head>
 <body>
-    <div class="card" id="app">
+    <div class="card">
         <h1>
             <span><i class="fas fa-calendar-check"></i></span>
             <span>Reserva tu Horario</span>
             <span class="update-indicator" id="updateIndicator">
                 <i class="fas fa-clock"></i>
-                <span>Actualizando horarios...</span>
+                <span>Actualizando...</span>
             </span>
         </h1>
 
         <div class="cookie-notice" id="cookieNotice">
-            <p><i class="fas fa-cookie-bite"></i> Este sitio utiliza cookies para recordar tus datos y preferencias.</p>
+            <p><i class="fas fa-cookie-bite"></i> Este sitio usa cookies para recordar tus datos.</p>
             <div>
-                <button class="cookie-btn" id="acceptCookiesBtn"><i class="fas fa-check"></i> Aceptar cookies</button>
-                <button class="cookie-btn" id="clearCookiesBtn"><i class="fas fa-trash"></i> Borrar cookies</button>
+                <button class="cookie-btn" id="acceptCookiesBtn"><i class="fas fa-check"></i> Aceptar</button>
+                <button class="cookie-btn" id="clearCookiesBtn"><i class="fas fa-trash"></i> Borrar</button>
             </div>
         </div>
 
         <div class="week-navigation">
             <div class="week-nav-buttons">
-                <button id="prevWeekBtn"><i class="fas fa-chevron-left"></i> Semana anterior</button>
-                <button id="nextWeekBtn">Semana siguiente <i class="fas fa-chevron-right"></i></button>
+                <button id="prevWeekBtn"><i class="fas fa-chevron-left"></i> Ant.</button>
+                <button id="nextWeekBtn">Sig. <i class="fas fa-chevron-right"></i></button>
             </div>
             <div class="week-label" id="weekLabel">Cargando...</div>
         </div>
@@ -692,16 +568,12 @@
                 <div class="table-responsive">
                     <table>
                         <thead>
-                            <tr id="headerRow">
-                                <th>Hora</th>
-                            </tr>
+                            <tr id="headerRow"><th>Hora</th></tr>
                         </thead>
-                        <tbody id="tablaHorarios">
-                        </tbody>
+                        <tbody id="tablaHorarios"></tbody>
                     </table>
                 </div>
             </div>
-
             <div class="right-col">
                 <form id="reservationForm">
                     <div class="form-grid">
@@ -718,14 +590,12 @@
                         <div class="field-group">
                             <label for="telefono"><i class="fas fa-phone-alt"></i> Teléfono</label>
                             <input type="tel" id="telefono" placeholder="+34 600 000 000" autocomplete="tel" required>
-                            <span class="hint">Incluye código de país</span>
+                            <span class="hint">Código de país</span>
                         </div>
                         <div class="field-group" id="serviceFieldGroup" style="display:none;">
                             <label for="servicio"><i class="fas fa-concierge-bell"></i> Servicio</label>
-                            <select id="servicio" autocomplete="off">
-                                <option value="">Selecciona un servicio</option>
-                            </select>
-                            <span class="hint">Tipo de servicio requerido</span>
+                            <select id="servicio" autocomplete="off"><option value="">Selecciona</option></select>
+                            <span class="hint">Tipo de servicio</span>
                         </div>
                         <div class="btn-wrapper">
                             <label class="btn-label" aria-hidden="true">Reservar</label>
@@ -750,13 +620,13 @@
                 <div class="popup-details" id="popupDetails"></div>
                 <div class="popup-notice">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <strong>Importante:</strong> En caso de no poder concurrir, por favor avisa con <strong>24 horas de anticipación</strong> para poder reasignar el turno.
+                    <strong>Importante:</strong> Avisa con <strong>24h</strong> de anticipación si no puedes asistir.
                 </div>
                 <div class="popup-whatsapp">
                     <i class="fab fa-whatsapp"></i>
                     <div>
                         <strong>Confirmación enviada por WhatsApp</strong><br>
-                        <span>Se ha enviado un mensaje con los datos al número <span class="whatsapp-number">+5493518692251</span></span>
+                        <span>Mensaje enviado al <span class="whatsapp-number">+5493518692251</span></span>
                     </div>
                 </div>
             </div>
@@ -779,16 +649,15 @@
             messagingSenderId: "766960713190",
             appId: "1:766960713190:web:adbaa9a25ae3cf0c896a27"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        // ===== VARIABLES GLOBALES =====
+        // ===== VARIABLES =====
         const TIMEZONE = 'America/Argentina/Buenos_Aires';
-        const daysOfWeek = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-        const morningHours = [9, 10, 11, 12];
-        const afternoonHours = [16, 17, 18, 19, 20];
+        const daysOfWeek = ['Lun','Mar','Mié','Jue','Vie','Sáb'];
+        const morningHours = [9,10,11,12];
+        const afternoonHours = [16,17,18,19,20];
         const COOKIE_EXPIRY_DAYS = 30;
         const WHATSAPP_NUMBER = '5493518692251';
         const MIN_INDICATOR_DURATION = 800;
@@ -798,7 +667,6 @@
         let unsubscribeCitas = null;
         let savingInProgress = false;
 
-        // DOM
         const tbody = document.getElementById('tablaHorarios');
         const headerRow = document.getElementById('headerRow');
         const weekLabel = document.getElementById('weekLabel');
@@ -816,561 +684,99 @@
         const updateIndicator = document.getElementById('updateIndicator');
 
         // ===== COOKIES =====
-        function setCookie(name, value, days) {
-            var date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            document.cookie = name + "=" + encodeURIComponent(value) + ";expires=" + date.toUTCString() + ";path=/";
-        }
-        function getCookie(name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
-            }
-            return null;
-        }
-        function deleteCookie(name) {
-            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        }
+        function setCookie(n,v,d){var date=new Date();date.setTime(date.getTime()+(d*24*60*60*1000));document.cookie=n+"="+encodeURIComponent(v)+";expires="+date.toUTCString()+";path=/";}
+        function getCookie(n){var nEQ=n+"=",ca=document.cookie.split(';');for(var i=0;i<ca.length;i++){var c=ca[i];while(c.charAt(0)===' ')c=c.substring(1);if(c.indexOf(nEQ)===0)return decodeURIComponent(c.substring(nEQ.length));}return null;}
+        function deleteCookie(n){document.cookie=n+"=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";}
 
         // ===== FECHAS =====
-        function getDatePartsInTimezone(date) {
-            const formatter = new Intl.DateTimeFormat('en-GB', {
-                timeZone: TIMEZONE,
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            });
-            const parts = formatter.formatToParts(date);
-            const get = (type) => parts.find(p => p.type === type)?.value;
-            return {
-                year: parseInt(get('year')),
-                month: parseInt(get('month')) - 1,
-                day: parseInt(get('day')),
-                hour: parseInt(get('hour')),
-                minute: parseInt(get('minute')),
-                second: parseInt(get('second'))
-            };
-        }
-        function getToday() {
-            const now = new Date();
-            const parts = getDatePartsInTimezone(now);
-            return new Date(parts.year, parts.month, parts.day, 0, 0, 0, 0);
-        }
-        function getNowInTimezone() {
-            const now = new Date();
-            const parts = getDatePartsInTimezone(now);
-            return new Date(parts.year, parts.month, parts.day, parts.hour, parts.minute, parts.second);
-        }
-        function getMonday(date) {
-            const parts = getDatePartsInTimezone(date);
-            var d = new Date(parts.year, parts.month, parts.day);
-            var day = d.getDay();
-            var diff = (day === 0 ? 6 : day - 1);
-            d.setDate(d.getDate() - diff);
-            d.setHours(0, 0, 0, 0);
-            return d;
-        }
-        function formatDate(date) {
-            return String(date.getDate()).padStart(2, '0');
-        }
-        function getMonthName(monthIndex) {
-            var months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-                          'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-            return months[monthIndex];
-        }
-        function getDateForWeekday(weekStart, weekdayIndex) {
-            var d = new Date(weekStart);
-            d.setDate(d.getDate() + weekdayIndex);
-            return d;
-        }
-        function isPastOrCurrentSlot(weekStart, weekdayIndex, hour) {
-            var slotDate = getDateForWeekday(weekStart, weekdayIndex);
-            slotDate.setHours(hour, 0, 0, 0);
-            const nowInTimezone = getNowInTimezone();
-            return slotDate <= nowInTimezone;
-        }
-        function isToday(date) {
-            var today = getToday();
-            return date.getFullYear() === today.getFullYear() &&
-                   date.getMonth() === today.getMonth() &&
-                   date.getDate() === today.getDate();
-        }
+        function getDatePartsInTimezone(date){const f=new Intl.DateTimeFormat('en-GB',{timeZone:TIMEZONE,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});const p=f.formatToParts(date);const g=t=>p.find(x=>x.type===t)?.value;return{year:parseInt(g('year')),month:parseInt(g('month'))-1,day:parseInt(g('day')),hour:parseInt(g('hour')),minute:parseInt(g('minute')),second:parseInt(g('second'))};}
+        function getToday(){const now=new Date();const p=getDatePartsInTimezone(now);return new Date(p.year,p.month,p.day,0,0,0,0);}
+        function getNowInTimezone(){const now=new Date();const p=getDatePartsInTimezone(now);return new Date(p.year,p.month,p.day,p.hour,p.minute,p.second);}
+        function getMonday(date){const p=getDatePartsInTimezone(date);var d=new Date(p.year,p.month,p.day);var day=d.getDay();var diff=(day===0?6:day-1);d.setDate(d.getDate()-diff);d.setHours(0,0,0,0);return d;}
+        function formatDate(date){return String(date.getDate()).padStart(2,'0');}
+        function getMonthName(m){return ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'][m];}
+        function getDateForWeekday(ws,wi){var d=new Date(ws);d.setDate(d.getDate()+wi);return d;}
+        function isPastOrCurrentSlot(ws,wi,hour){var slotDate=getDateForWeekday(ws,wi);slotDate.setHours(hour,0,0,0);const now=getNowInTimezone();return slotDate<=now;}
+        function isToday(date){var today=getToday();return date.getFullYear()===today.getFullYear()&&date.getMonth()===today.getMonth()&&date.getDate()===today.getDate();}
 
         // ===== ACTUALIZAR TABLA =====
-        function updateTableWithReservations(reservas) {
-            var reservados = new Set();
-            reservas.forEach(function(r) {
-                var clave = r.fecha + ' ' + r.hora;
-                reservados.add(clave);
-            });
-
-            var radios = document.querySelectorAll('input[name="slot"]');
-            radios.forEach(function(radio) {
-                var cell = radio.closest('td');
-                var isPast = radio.hasAttribute('data-past');
-                var isTodayCell = cell && cell.getAttribute('data-is-today') === 'true';
-
-                if (reservados.has(radio.value)) {
-                    radio.disabled = true;
-                    if (cell) {
-                        cell.classList.remove('available-cell', 'today-cell');
-                        cell.classList.add('reserved-cell');
-                    }
-                } else if (!isPast) {
-                    radio.disabled = false;
-                    if (cell) {
-                        cell.classList.remove('reserved-cell');
-                        if (isTodayCell) {
-                            cell.classList.add('today-cell');
-                        } else {
-                            cell.classList.add('available-cell');
-                        }
-                    }
+        function updateTableWithReservations(reservas){
+            var reservados=new Set();reservas.forEach(r=>{reservados.add(r.fecha+' '+r.hora);});
+            var radios=document.querySelectorAll('input[name="slot"]');
+            radios.forEach(function(radio){
+                var cell=radio.closest('td');
+                var isPast=radio.hasAttribute('data-past');
+                var isTodayCell=cell&&cell.getAttribute('data-is-today')==='true';
+                if(reservados.has(radio.value)){
+                    radio.disabled=true;
+                    if(cell){cell.classList.remove('available-cell','today-cell');cell.classList.add('reserved-cell');}
+                }else if(!isPast){
+                    radio.disabled=false;
+                    if(cell){cell.classList.remove('reserved-cell');if(isTodayCell){cell.classList.add('today-cell');}else{cell.classList.add('available-cell');}}
                 }
             });
-
-            var selected = document.querySelector('input[name="slot"]:checked');
-            if (selected && selected.disabled && !savingInProgress) {
-                selected.checked = false;
-                updateFeedback();
-                deleteCookie('reserva_horario');
-                alert('⚠️ El horario que habías seleccionado fue reservado por otra persona. Por favor, elige otro.');
-            } else if (selected && selected.disabled && savingInProgress) {
-                selected.checked = false;
-                updateFeedback();
-                deleteCookie('reserva_horario');
+            var selected=document.querySelector('input[name="slot"]:checked');
+            if(selected&&selected.disabled&&!savingInProgress){
+                selected.checked=false;updateFeedback();deleteCookie('reserva_horario');
+                alert('⚠️ El horario seleccionado fue reservado por otra persona. Elige otro.');
+            }else if(selected&&selected.disabled&&savingInProgress){
+                selected.checked=false;updateFeedback();deleteCookie('reserva_horario');
             }
         }
 
         // ===== RENDERIZAR TABLA =====
-        async function renderTable() {
+        async function renderTable(){
             updateIndicator.classList.add('show');
-            const startTime = Date.now();
-
-            var today = getToday();
-
-            var headerHtml = '<th>Hora</th>';
-            for (var i = 0; i < daysOfWeek.length; i++) {
-                var date = getDateForWeekday(currentWeekStart, i);
-                var dayLabel = daysOfWeek[i];
-                var dayNumber = formatDate(date);
-                var isTodayClass = isToday(date) ? 'today-header' : '';
-                headerHtml += '<th class="' + isTodayClass + '">' + dayLabel + ' ' + dayNumber + '</th>';
-            }
-            headerRow.innerHTML = headerHtml;
-
-            var bodyHtml = '';
-
-            morningHours.forEach(function(hour) {
-                bodyHtml += '<tr><td class="time-slot"><i class="far fa-clock"></i> ' + hour + ':00</td>';
-                for (var i = 0; i < daysOfWeek.length; i++) {
-                    var date = getDateForWeekday(currentWeekStart, i);
-                    var dayNumber = formatDate(date);
-                    var dayLabel = daysOfWeek[i];
-                    var value = dayLabel + ' ' + dayNumber + ' ' + hour + ':00';
-                    var isPastOrCurrent = isPastOrCurrentSlot(currentWeekStart, i, hour);
-                    var disabled = isPastOrCurrent ? 'disabled' : '';
-                    var dataPast = isPastOrCurrent ? 'data-past="true"' : '';
-                    var dataToday = isToday(date) ? 'data-is-today="true"' : '';
-
-                    var cellClass = '';
-                    if (isToday(date)) cellClass = 'today-cell';
-                    else if (!isPastOrCurrent) cellClass = 'available-cell';
-                    else cellClass = 'disabled-cell';
-
-                    bodyHtml +=
-                        '<td class="' + cellClass + '" ' + dataToday + '><div class="slot-cell"><input type="radio" name="slot" value="' + value + '" ' +
-                        disabled + ' ' + dataPast + '></div></td>';
-                }
-                bodyHtml += '</tr>';
+            const startTime=Date.now();
+            var today=getToday();
+            var headerHtml='<th>Hora</th>';
+            for(var i=0;i<daysOfWeek.length;i++){var date=getDateForWeekday(currentWeekStart,i);var dayLabel=daysOfWeek[i];var dayNumber=formatDate(date);var isTodayClass=isToday(date)?'today-header':'';headerHtml+='<th class="'+isTodayClass+'">'+dayLabel+' '+dayNumber+'</th>';}
+            headerRow.innerHTML=headerHtml;
+            var bodyHtml='';
+            morningHours.forEach(function(hour){
+                bodyHtml+='<tr><td class="time-slot"><i class="far fa-clock"></i> '+hour+':00</td>';
+                for(var i=0;i<daysOfWeek.length;i++){var date=getDateForWeekday(currentWeekStart,i);var dayNumber=formatDate(date);var dayLabel=daysOfWeek[i];var value=dayLabel+' '+dayNumber+' '+hour+':00';var isPastOrCurrent=isPastOrCurrentSlot(currentWeekStart,i,hour);var disabled=isPastOrCurrent?'disabled':'';var dataPast=isPastOrCurrent?'data-past="true"':'';var dataToday=isToday(date)?'data-is-today="true"':'';var cellClass='';if(isToday(date))cellClass='today-cell';else if(!isPastOrCurrent)cellClass='available-cell';else cellClass='disabled-cell';bodyHtml+='<td class="'+cellClass+'" '+dataToday+'><div class="slot-cell"><input type="radio" name="slot" value="'+value+'" '+disabled+' '+dataPast+'></div></td>';}
+                bodyHtml+='</tr>';
             });
-
-            bodyHtml += '<tr class="afternoon-row">';
-            for (var i = 0; i <= 6; i++) {
-                var dayIndex = (i === 0) ? 0 : i - 1;
-                var date = getDateForWeekday(currentWeekStart, dayIndex);
-                var isPastOrCurrent = isPastOrCurrentSlot(currentWeekStart, dayIndex, 16);
-
-                var cellClass = '';
-                if (isToday(date)) cellClass = 'today-cell';
-                else if (!isPastOrCurrent) cellClass = 'available-cell';
-                else cellClass = 'disabled-cell';
-
-                if (i === 0) {
-                    bodyHtml += '<td class="' + cellClass +
-                        '" style="text-align: center; letter-spacing: 2px; font-weight: 600; color: #b0b0b0; font-size: 0.6rem;">' +
-                        '<i class="fas fa-sun" style="margin-right: 3px; color: #777777;"></i> TARDE</td>';
-                } else {
-                    bodyHtml += '<td class="' + cellClass + '"></td>';
-                }
-            }
-            bodyHtml += '</tr>';
-
-            afternoonHours.forEach(function(hour) {
-                bodyHtml += '<tr><td class="time-slot"><i class="far fa-clock"></i> ' + hour + ':00</td>';
-                for (var i = 0; i < daysOfWeek.length; i++) {
-                    var date = getDateForWeekday(currentWeekStart, i);
-                    var dayNumber = formatDate(date);
-                    var dayLabel = daysOfWeek[i];
-                    var value = dayLabel + ' ' + dayNumber + ' ' + hour + ':00';
-                    var isPastOrCurrent = isPastOrCurrentSlot(currentWeekStart, i, hour);
-                    var disabled = isPastOrCurrent ? 'disabled' : '';
-                    var dataPast = isPastOrCurrent ? 'data-past="true"' : '';
-                    var dataToday = isToday(date) ? 'data-is-today="true"' : '';
-
-                    var cellClass = '';
-                    if (isToday(date)) cellClass = 'today-cell';
-                    else if (!isPastOrCurrent) cellClass = 'available-cell';
-                    else cellClass = 'disabled-cell';
-
-                    bodyHtml +=
-                        '<td class="' + cellClass + '" ' + dataToday + '><div class="slot-cell"><input type="radio" name="slot" value="' + value + '" ' +
-                        disabled + ' ' + dataPast + '></div></td>';
-                }
-                bodyHtml += '</tr>';
+            bodyHtml+='<tr class="afternoon-row">';
+            for(var i=0;i<=6;i++){var dayIndex=(i===0)?0:i-1;var date=getDateForWeekday(currentWeekStart,dayIndex);var isPastOrCurrent=isPastOrCurrentSlot(currentWeekStart,dayIndex,16);var cellClass='';if(isToday(date))cellClass='today-cell';else if(!isPastOrCurrent)cellClass='available-cell';else cellClass='disabled-cell';if(i===0){bodyHtml+='<td class="'+cellClass+'" style="text-align:center;letter-spacing:1px;font-weight:600;color:#b0b0b0;font-size:0.5rem;"><i class="fas fa-sun" style="margin-right:2px;color:#777;"></i> TARDE</td>';}else{bodyHtml+='<td class="'+cellClass+'"></td>';}}
+            bodyHtml+='</tr>';
+            afternoonHours.forEach(function(hour){
+                bodyHtml+='<tr><td class="time-slot"><i class="far fa-clock"></i> '+hour+':00</td>';
+                for(var i=0;i<daysOfWeek.length;i++){var date=getDateForWeekday(currentWeekStart,i);var dayNumber=formatDate(date);var dayLabel=daysOfWeek[i];var value=dayLabel+' '+dayNumber+' '+hour+':00';var isPastOrCurrent=isPastOrCurrentSlot(currentWeekStart,i,hour);var disabled=isPastOrCurrent?'disabled':'';var dataPast=isPastOrCurrent?'data-past="true"':'';var dataToday=isToday(date)?'data-is-today="true"':'';var cellClass='';if(isToday(date))cellClass='today-cell';else if(!isPastOrCurrent)cellClass='available-cell';else cellClass='disabled-cell';bodyHtml+='<td class="'+cellClass+'" '+dataToday+'><div class="slot-cell"><input type="radio" name="slot" value="'+value+'" '+disabled+' '+dataPast+'></div></td>';}
+                bodyHtml+='</tr>';
             });
-
-            tbody.innerHTML = bodyHtml;
-
-            var monthName = getMonthName(currentWeekStart.getMonth());
-            weekLabel.textContent = monthName + ' ' + currentWeekStart.getFullYear();
-
-            if (allReservations.length > 0) {
-                updateTableWithReservations(allReservations);
-            }
-
-            var radios = document.querySelectorAll('input[name="slot"]');
-            radios.forEach(function(radio) {
-                radio.addEventListener('change', function() {
-                    updateFeedback();
-                    saveFormDataToCookies();
-                });
-            });
-
-            var horarioGuardado = getCookie('reserva_horario');
-            if (horarioGuardado) {
-                radios.forEach(function(radio) {
-                    if (radio.value === horarioGuardado && !radio.disabled) {
-                        radio.checked = true;
-                    }
-                });
-            }
-
+            tbody.innerHTML=bodyHtml;
+            weekLabel.textContent=getMonthName(currentWeekStart.getMonth())+' '+currentWeekStart.getFullYear();
+            if(allReservations.length>0)updateTableWithReservations(allReservations);
+            var radios=document.querySelectorAll('input[name="slot"]');
+            radios.forEach(function(radio){radio.addEventListener('change',function(){updateFeedback();saveFormDataToCookies();});});
+            var horarioGuardado=getCookie('reserva_horario');
+            if(horarioGuardado){radios.forEach(function(radio){if(radio.value===horarioGuardado&&!radio.disabled)radio.checked=true;});}
             updateFeedback();
-
-            const elapsed = Date.now() - startTime;
-            const remaining = Math.max(0, MIN_INDICATOR_DURATION - elapsed);
-            setTimeout(function() {
-                updateIndicator.classList.remove('show');
-            }, remaining);
+            const elapsed=Date.now()-startTime;
+            const remaining=Math.max(0,MIN_INDICATOR_DURATION-elapsed);
+            setTimeout(function(){updateIndicator.classList.remove('show');},remaining);
         }
 
-        // ===== FEEDBACK =====
-        function updateFeedback() {
-            var checked = document.querySelector('input[name="slot"]:checked');
-            if (checked && !checked.disabled) {
-                selectedDisplay.classList.add('show');
-                selectedText.textContent = checked.value;
-            } else {
-                selectedDisplay.classList.remove('show');
-            }
-        }
+        function updateFeedback(){var checked=document.querySelector('input[name="slot"]:checked');if(checked&&!checked.disabled){selectedDisplay.classList.add('show');selectedText.textContent=checked.value;}else{selectedDisplay.classList.remove('show');}}
 
-        // ===== COOKIES FORM =====
-        function saveFormDataToCookies() {
-            var nombre = nombreInput.value.trim();
-            var email = emailInput.value.trim();
-            var telefono = telefonoInput.value.trim();
-            var selected = document.querySelector('input[name="slot"]:checked');
+        function saveFormDataToCookies(){var n=nombreInput.value.trim(),e=emailInput.value.trim(),t=telefonoInput.value.trim(),s=document.querySelector('input[name="slot"]:checked');if(n)setCookie('reserva_nombre',n,COOKIE_EXPIRY_DAYS);else deleteCookie('reserva_nombre');if(e)setCookie('reserva_email',e,COOKIE_EXPIRY_DAYS);else deleteCookie('reserva_email');if(t)setCookie('reserva_telefono',t,COOKIE_EXPIRY_DAYS);else deleteCookie('reserva_telefono');if(s)setCookie('reserva_horario',s.value,COOKIE_EXPIRY_DAYS);else deleteCookie('reserva_horario');}
+        function loadFormDataFromCookies(){var n=getCookie('reserva_nombre'),e=getCookie('reserva_email'),t=getCookie('reserva_telefono');if(n)nombreInput.value=n;if(e)emailInput.value=e;if(t)telefonoInput.value=t;}
 
-            if (nombre) setCookie('reserva_nombre', nombre, COOKIE_EXPIRY_DAYS);
-            else deleteCookie('reserva_nombre');
-            if (email) setCookie('reserva_email', email, COOKIE_EXPIRY_DAYS);
-            else deleteCookie('reserva_email');
-            if (telefono) setCookie('reserva_telefono', telefono, COOKIE_EXPIRY_DAYS);
-            else deleteCookie('reserva_telefono');
-            if (selected) setCookie('reserva_horario', selected.value, COOKIE_EXPIRY_DAYS);
-            else deleteCookie('reserva_horario');
-        }
+        function showConfirmationPopup(nombre,email,telefono,horario,servicio){popupDetails.innerHTML='';[{label:'Nombre',value:nombre},{label:'Email',value:email},{label:'Teléfono',value:telefono},{label:'Horario',value:horario},{label:'Servicio',value:servicio||'-'}].forEach(function(f){var row=document.createElement('div');row.className='detail-row';row.innerHTML='<span class="label">'+f.label+'</span><span class="value">'+(f.value||'—')+'</span>';popupDetails.appendChild(row);});popupOverlay.classList.add('show');document.body.style.overflow='hidden';}
+        function closePopup(){popupOverlay.classList.remove('show');document.body.style.overflow='';}
+        function sendWhatsAppMessage(nombre,email,telefono,horario,servicio){var msg='📋 *NUEVA RESERVA*\n\n👤 *Nombre:* '+nombre+'\n📧 *Email:* '+email+'\n📞 *Teléfono:* '+telefono+'\n📅 *Horario:* '+horario+'\n🛠 *Servicio:* '+(servicio||'No especificado')+'\n\n📍 *Reserva confirmada*';window.open('https://wa.me/'+WHATSAPP_NUMBER+'?text='+encodeURIComponent(msg),'_blank');}
 
-        function loadFormDataFromCookies() {
-            var nombre = getCookie('reserva_nombre');
-            var email = getCookie('reserva_email');
-            var telefono = getCookie('reserva_telefono');
-            if (nombre) nombreInput.value = nombre;
-            if (email) emailInput.value = email;
-            if (telefono) telefonoInput.value = telefono;
-        }
+        async function loadServices(){try{const doc=await db.collection('config').doc('servicios').get();if(doc.exists){const data=doc.data();const lista=data.lista||['Consulta','Tatuaje','Piercing','Diseño'];const nombreCampo=data.nombreCampo||'Servicio';if(lista.length>1){serviceFieldGroup.style.display='block';const label=serviceFieldGroup.querySelector('label');label.innerHTML='<i class="fas fa-concierge-bell"></i> '+nombreCampo;servicioSelect.innerHTML='';lista.forEach(serv=>{const opt=document.createElement('option');opt.value=serv;opt.textContent=serv;servicioSelect.appendChild(opt);});}else{serviceFieldGroup.style.display='none';}}else{serviceFieldGroup.style.display='none';}}catch(e){console.error('Error cargando servicios:',e);serviceFieldGroup.style.display='none';}}
 
-        // ===== POPUP =====
-        function showConfirmationPopup(nombre, email, telefono, horario, servicio) {
-            popupDetails.innerHTML = '';
-            var fields = [
-                { label: 'Nombre', value: nombre },
-                { label: 'Email', value: email },
-                { label: 'Teléfono', value: telefono },
-                { label: 'Horario', value: horario },
-                { label: 'Servicio', value: servicio || '-' }
-            ];
-            fields.forEach(function(field) {
-                var row = document.createElement('div');
-                row.className = 'detail-row';
-                row.innerHTML = '<span class="label">' + field.label + '</span><span class="value">' + (field.value || '—') + '</span>';
-                popupDetails.appendChild(row);
-            });
-            popupOverlay.classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
+        function startRealtimeListener(){if(unsubscribeCitas){unsubscribeCitas();unsubscribeCitas=null;}unsubscribeCitas=db.collection('citas').where('estado','==','ACTIVA').onSnapshot((snapshot)=>{const reservas=[];snapshot.forEach(doc=>{const data=doc.data();reservas.push({id:doc.id,fecha:data.fecha||'',hora:data.hora||'',nombre:data.nombre||'',email:data.email||'',telefono:data.telefono||'',servicio:data.servicio||'',estado:data.estado||'ACTIVA'});});allReservations=reservas;updateTableWithReservations(reservas);},(error)=>{console.error('Error en listener:',error);});}
 
-        function closePopup() {
-            popupOverlay.classList.remove('show');
-            document.body.style.overflow = '';
-        }
+        async function saveReservationToFirestore(data){try{const docRef=await db.collection('citas').add({fecha:data.fecha,hora:data.hora,nombre:data.nombre,email:data.email,telefono:data.telefono,servicio:data.servicio||'',estado:'ACTIVA',createdAt:firebase.firestore.FieldValue.serverTimestamp()});return{success:true,id:docRef.id};}catch(error){console.error('Error guardando:',error);return{success:false,error:error.message};}}
 
-        // ===== WHATSAPP =====
-        function sendWhatsAppMessage(nombre, email, telefono, horario, servicio) {
-            var message = '📋 *NUEVA RESERVA*\n\n' +
-                '👤 *Nombre:* ' + nombre + '\n' +
-                '📧 *Email:* ' + email + '\n' +
-                '📞 *Teléfono:* ' + telefono + '\n' +
-                '📅 *Horario:* ' + horario + '\n' +
-                '🛠 *Servicio:* ' + (servicio || 'No especificado') + '\n\n' +
-                '📍 *Reserva confirmada*';
-            var url = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(message);
-            window.open(url, '_blank');
-        }
+        function clearForm(){nombreInput.value='';emailInput.value='';telefonoInput.value='';if(servicioSelect)servicioSelect.value='';var selected=document.querySelector('input[name="slot"]:checked');if(selected){selected.checked=false;updateFeedback();}deleteCookie('reserva_nombre');deleteCookie('reserva_email');deleteCookie('reserva_telefono');deleteCookie('reserva_horario');}
 
-        // ===== SERVICIOS =====
-        async function loadServices() {
-            try {
-                const doc = await db.collection('config').doc('servicios').get();
-                if (doc.exists) {
-                    const data = doc.data();
-                    const lista = data.lista || ['Consulta', 'Tatuaje', 'Piercing', 'Diseño'];
-                    const nombreCampo = data.nombreCampo || 'Servicio';
-
-                    if (lista.length > 1) {
-                        serviceFieldGroup.style.display = 'block';
-                        const label = serviceFieldGroup.querySelector('label');
-                        label.innerHTML = '<i class="fas fa-concierge-bell"></i> ' + nombreCampo;
-                        servicioSelect.innerHTML = '';
-                        lista.forEach(serv => {
-                            const opt = document.createElement('option');
-                            opt.value = serv;
-                            opt.textContent = serv;
-                            servicioSelect.appendChild(opt);
-                        });
-                    } else {
-                        serviceFieldGroup.style.display = 'none';
-                    }
-                } else {
-                    serviceFieldGroup.style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Error cargando servicios:', error);
-                serviceFieldGroup.style.display = 'none';
-            }
-        }
-
-        // ===== LISTENER EN TIEMPO REAL =====
-        function startRealtimeListener() {
-            if (unsubscribeCitas) {
-                unsubscribeCitas();
-                unsubscribeCitas = null;
-            }
-
-            unsubscribeCitas = db.collection('citas')
-                .where('estado', '==', 'ACTIVA')
-                .onSnapshot((snapshot) => {
-                    const reservas = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        reservas.push({
-                            id: doc.id,
-                            fecha: data.fecha || '',
-                            hora: data.hora || '',
-                            nombre: data.nombre || '',
-                            email: data.email || '',
-                            telefono: data.telefono || '',
-                            servicio: data.servicio || '',
-                            estado: data.estado || 'ACTIVA'
-                        });
-                    });
-                    allReservations = reservas;
-                    updateTableWithReservations(reservas);
-                }, (error) => {
-                    console.error('Error en listener de citas:', error);
-                });
-        }
-
-        // ===== GUARDAR RESERVA =====
-        async function saveReservationToFirestore(data) {
-            try {
-                const docRef = await db.collection('citas').add({
-                    fecha: data.fecha,
-                    hora: data.hora,
-                    nombre: data.nombre,
-                    email: data.email,
-                    telefono: data.telefono,
-                    servicio: data.servicio || '',
-                    estado: 'ACTIVA',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                return { success: true, id: docRef.id };
-            } catch (error) {
-                console.error('Error guardando en Firestore:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
-        // ===== LIMPIAR FORMULARIO =====
-        function clearForm() {
-            nombreInput.value = '';
-            emailInput.value = '';
-            telefonoInput.value = '';
-            if (servicioSelect) servicioSelect.value = '';
-            var selected = document.querySelector('input[name="slot"]:checked');
-            if (selected) {
-                selected.checked = false;
-                updateFeedback();
-            }
-            deleteCookie('reserva_nombre');
-            deleteCookie('reserva_email');
-            deleteCookie('reserva_telefono');
-            deleteCookie('reserva_horario');
-        }
-
-        // ===== INICIALIZACIÓN =====
-        async function init() {
-            await loadServices();
-            loadFormDataFromCookies();
-
-            try {
-                await auth.signInAnonymously();
-                console.log('Usuario anónimo autenticado');
-                startRealtimeListener();
-            } catch (error) {
-                console.error('Error en autenticación anónima:', error);
-                startRealtimeListener();
-            }
-
-            await renderTable();
-
-            document.getElementById('prevWeekBtn').addEventListener('click', function() {
-                currentWeekStart.setDate(currentWeekStart.getDate() - 7);
-                renderTable();
-            });
-            document.getElementById('nextWeekBtn').addEventListener('click', function() {
-                currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-                renderTable();
-            });
-
-            document.getElementById('acceptCookiesBtn').addEventListener('click', function() {
-                setCookie('cookies_aceptadas', 'true', 365);
-                document.getElementById('cookieNotice').style.display = 'none';
-                saveFormDataToCookies();
-                alert('✅ Cookies aceptadas. Tus datos se guardarán automáticamente.');
-            });
-            document.getElementById('clearCookiesBtn').addEventListener('click', function() {
-                var cookies = ['reserva_nombre', 'reserva_email', 'reserva_telefono', 'reserva_horario', 'cookies_aceptadas'];
-                cookies.forEach(function(name) { deleteCookie(name); });
-                nombreInput.value = '';
-                emailInput.value = '';
-                telefonoInput.value = '';
-                document.querySelectorAll('input[name="slot"]').forEach(function(radio) { radio.checked = false; });
-                updateFeedback();
-                alert('🗑️ Cookies eliminadas. Los datos han sido borrados.');
-            });
-
-            popupCloseBtn.addEventListener('click', closePopup);
-            popupOverlay.addEventListener('click', function(e) {
-                if (e.target === this) closePopup();
-            });
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && popupOverlay.classList.contains('show')) {
-                    closePopup();
-                }
-            });
-
-            nombreInput.addEventListener('input', saveFormDataToCookies);
-            emailInput.addEventListener('input', saveFormDataToCookies);
-            telefonoInput.addEventListener('input', saveFormDataToCookies);
-
-            document.getElementById('reservationForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-
-                var nombre = nombreInput.value.trim();
-                var email = emailInput.value.trim();
-                var telefono = telefonoInput.value.trim();
-                var selected = document.querySelector('input[name="slot"]:checked');
-                var servicio = servicioSelect.value || '';
-
-                if (!nombre || !email || !telefono) {
-                    alert('⚠️ Por favor, completa todos los campos del formulario.');
-                    nombreInput.focus();
-                    return;
-                }
-
-                if (!selected) {
-                    alert('⚠️ Por favor, selecciona un día y hora válido (futuro) en la tabla.');
-                    return;
-                }
-
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-
-                var parts = selected.value.split(' ');
-                var fecha = parts[0] + ' ' + parts[1];
-                var hora = parts[2];
-
-                var data = {
-                    fecha: fecha,
-                    hora: hora,
-                    nombre: nombre,
-                    email: email,
-                    telefono: telefono,
-                    servicio: servicio
-                };
-
-                savingInProgress = true;
-
-                var result = await saveReservationToFirestore(data);
-
-                if (result.success) {
-                    clearForm();
-                    sendWhatsAppMessage(nombre, email, telefono, selected ? selected.value : fecha + ' ' + hora, servicio);
-                    showConfirmationPopup(nombre, email, telefono, selected ? selected.value : fecha + ' ' + hora, servicio);
-                } else {
-                    alert('❌ Error al guardar la reserva: ' + (result.error || 'Intenta nuevamente.'));
-                }
-
-                setTimeout(function() {
-                    savingInProgress = false;
-                }, 2000);
-
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Reservar';
-            });
-
-            if (getCookie('cookies_aceptadas') === 'true') {
-                document.getElementById('cookieNotice').style.display = 'none';
-            }
-
-            setInterval(function() {
-                if (allReservations.length > 0) {
-                    updateTableWithReservations(allReservations);
-                }
-            }, 60000);
-        }
-
-        init();
+        async function init(){await loadServices();loadFormDataFromCookies();try{await auth.signInAnonymously();console.log('Usuario anónimo autenticado');startRealtimeListener();}catch(e){console.error('Error autenticación:',e);startRealtimeListener();}await renderTable();document.getElementById('prevWeekBtn').addEventListener('click',function(){currentWeekStart.setDate(currentWeekStart.getDate()-7);renderTable();});document.getElementById('nextWeekBtn').addEventListener('click',function(){currentWeekStart.setDate(currentWeekStart.getDate()+7);renderTable();});document.getElementById('acceptCookiesBtn').addEventListener('click',function(){setCookie('cookies_aceptadas','true',365);document.getElementById('cookieNotice').style.display='none';saveFormDataToCookies();alert('✅ Cookies aceptadas.');});document.getElementById('clearCookiesBtn').addEventListener('click',function(){['reserva_nombre','reserva_email','reserva_telefono','reserva_horario','cookies_aceptadas'].forEach(n=>deleteCookie(n));nombreInput.value='';emailInput.value='';telefonoInput.value='';document.querySelectorAll('input[name="slot"]').forEach(r=>r.checked=false);updateFeedback();alert('🗑️ Cookies eliminadas.');});popupCloseBtn.addEventListener('click',closePopup);popupOverlay.addEventListener('click',function(e){if(e.target===this)closePopup();});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&popupOverlay.classList.contains('show'))closePopup();});nombreInput.addEventListener('input',saveFormDataToCookies);emailInput.addEventListener('input',saveFormDataToCookies);telefonoInput.addEventListener('input',saveFormDataToCookies);document.getElementById('reservationForm').addEventListener('submit',async function(e){e.preventDefault();var nombre=nombreInput.value.trim();var email=emailInput.value.trim();var telefono=telefonoInput.value.trim();var selected=document.querySelector('input[name="slot"]:checked');var servicio=servicioSelect.value||'';if(!nombre||!email||!telefono){alert('⚠️ Completa todos los campos.');nombreInput.focus();return;}if(!selected){alert('⚠️ Selecciona un día y hora válido.');return;}submitBtn.disabled=true;submitBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Enviando...';var parts=selected.value.split(' ');var fecha=parts[0]+' '+parts[1];var hora=parts[2];var data={fecha:fecha,hora:hora,nombre:nombre,email:email,telefono:telefono,servicio:servicio};savingInProgress=true;var result=await saveReservationToFirestore(data);if(result.success){clearForm();sendWhatsAppMessage(nombre,email,telefono,selected?selected.value:fecha+' '+hora,servicio);showConfirmationPopup(nombre,email,telefono,selected?selected.value:fecha+' '+hora,servicio);}else{alert('❌ Error al guardar: '+(result.error||'Intenta nuevamente.'));}setTimeout(function(){savingInProgress=false;},2000);submitBtn.disabled=false;submitBtn.innerHTML='<i class="fas fa-calendar-check"></i> Reservar';});if(getCookie('cookies_aceptadas')==='true'){document.getElementById('cookieNotice').style.display='none';}setInterval(function(){if(allReservations.length>0)updateTableWithReservations(allReservations);},60000);}init();
     </script>
 </body>
 </html>
