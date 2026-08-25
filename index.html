@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
     <style>
-        /* ===== ESTILOS (iguales a los que tenías) ===== */
+        /* ===== ESTILOS BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -197,7 +197,7 @@
             flex-direction: column;
         }
 
-        /* ===== TABLA COMPACTA ===== */
+        /* ===== TABLA CON CELDAS MÁS ALTAS ===== */
         .table-responsive {
             overflow-x: auto;
             border-radius: 4px;
@@ -237,7 +237,7 @@
             vertical-align: super;
         }
         td {
-            padding: 0.12rem 0.08rem;
+            padding: 0.2rem 0.1rem; /* Aumentado el padding vertical */
             text-align: center;
             border-bottom: 1px solid #333333;
             vertical-align: middle;
@@ -281,7 +281,7 @@
         .time-slot i { margin-right: 2px; color: #777777; font-size: 0.65rem; }
         .slot-cell {
             position: relative;
-            height: 22px;
+            height: 28px; /* Aumentado de 22px a 28px */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -588,8 +588,8 @@
             table { font-size: 0.7rem; min-width: 380px; }
             th { padding: 0.2rem 0.15rem; font-size: 0.65rem; }
             th:first-child { min-width: 40px; padding: 0.2rem 0.1rem; }
-            td { padding: 0.08rem 0.05rem; }
-            .slot-cell { height: 20px; }
+            td { padding: 0.15rem 0.08rem; }
+            .slot-cell { height: 24px; }
             .slot-cell input[type="radio"] { width: 12px; height: 12px; }
             .time-slot { font-size: 0.65rem; }
             .afternoon-row td { font-size: 0.55rem; padding: 0.1rem 0.02rem; }
@@ -617,8 +617,8 @@
             table { font-size: 0.6rem; min-width: 320px; }
             th { padding: 0.15rem 0.1rem; font-size: 0.55rem; }
             th:first-child { min-width: 30px; padding: 0.15rem 0.05rem; }
-            td { padding: 0.05rem 0.03rem; }
-            .slot-cell { height: 18px; }
+            td { padding: 0.1rem 0.05rem; }
+            .slot-cell { height: 20px; }
             .slot-cell input[type="radio"] { width: 10px; height: 10px; border-width: 1.5px; }
             .time-slot { font-size: 0.55rem; padding: 0.05rem 0.02rem; }
             .afternoon-row td { font-size: 0.5rem; padding: 0.08rem 0.02rem; }
@@ -803,7 +803,7 @@
         const MIN_INDICATOR_DURATION = 800;
 
         let currentWeekStart = getMonday(new Date());
-        let allReservations = [];           // Array de objetos {fecha, hora, ...}
+        let allReservations = [];
         let isAutoUpdating = false;
         let unsubscribeCitas = null;
         let authReady = false;
@@ -826,7 +826,7 @@
         const updateIndicator = document.getElementById('updateIndicator');
 
         // ============================================================
-        //  FUNCIONES DE COOKIES (sin cambios)
+        //  FUNCIONES DE COOKIES
         // ============================================================
         function setCookie(name, value, days) {
             var date = new Date();
@@ -848,7 +848,7 @@
         }
 
         // ============================================================
-        //  FUNCIONES DE FECHA / HORA (iguales)
+        //  FUNCIONES DE FECHA / HORA
         // ============================================================
         function getDatePartsInTimezone(date) {
             const formatter = new Intl.DateTimeFormat('en-GB', {
@@ -918,10 +918,9 @@
         }
 
         // ============================================================
-        //  ACTUALIZAR TABLA CON RESERVAS (desde Firebase)
+        //  ACTUALIZAR TABLA CON RESERVAS
         // ============================================================
         function updateTableWithReservations(reservas) {
-            // reservas es un array de objetos con al menos {fecha, hora}
             var reservados = new Set();
             reservas.forEach(function(r) {
                 var clave = r.fecha + ' ' + r.hora;
@@ -953,7 +952,6 @@
                 }
             });
 
-            // Si el horario guardado en cookie ahora está ocupado, lo deseleccionamos
             var selected = document.querySelector('input[name="slot"]:checked');
             if (selected && selected.disabled) {
                 selected.checked = false;
@@ -964,7 +962,7 @@
         }
 
         // ============================================================
-        //  RENDERIZAR TABLA (construye la tabla + carga reservas)
+        //  RENDERIZAR TABLA
         // ============================================================
         async function renderTable() {
             updateIndicator.classList.add('show');
@@ -1064,7 +1062,7 @@
             var monthName = getMonthName(currentWeekStart.getMonth());
             weekLabel.textContent = monthName + ' ' + currentWeekStart.getFullYear();
 
-            // Aplicar estado de reservas (si ya están cargadas)
+            // Aplicar estado de reservas
             if (allReservations.length > 0) {
                 updateTableWithReservations(allReservations);
             }
@@ -1166,7 +1164,7 @@
         }
 
         // ============================================================
-        //  WHATSAPP (simplificado)
+        //  WHATSAPP
         // ============================================================
         function sendWhatsAppMessage(nombre, email, telefono, horario, servicio) {
             var message = '📋 *NUEVA RESERVA*\n\n' +
@@ -1181,7 +1179,7 @@
         }
 
         // ============================================================
-        //  CONFIGURACIÓN DE SERVICIOS (carga desde Firestore)
+        //  CONFIGURACIÓN DE SERVICIOS
         // ============================================================
         async function loadServices() {
             try {
@@ -1191,7 +1189,6 @@
                     const lista = data.lista || ['Consulta', 'Tatuaje', 'Piercing', 'Diseño'];
                     const nombreCampo = data.nombreCampo || 'Servicio';
 
-                    // Mostrar el campo si hay más de un servicio
                     if (lista.length > 1) {
                         serviceFieldGroup.style.display = 'block';
                         const label = serviceFieldGroup.querySelector('label');
@@ -1207,7 +1204,6 @@
                         serviceFieldGroup.style.display = 'none';
                     }
                 } else {
-                    // Configuración por defecto: ocultar servicio
                     serviceFieldGroup.style.display = 'none';
                 }
             } catch (error) {
@@ -1226,7 +1222,7 @@
             }
 
             unsubscribeCitas = db.collection('citas')
-                .where('estado', '==', 'ACTIVA')  // solo activas para mostrar
+                .where('estado', '==', 'ACTIVA')
                 .onSnapshot((snapshot) => {
                     const reservas = [];
                     snapshot.forEach(doc => {
@@ -1243,7 +1239,6 @@
                         });
                     });
                     allReservations = reservas;
-                    // Actualizar la tabla con los nuevos datos
                     updateTableWithReservations(reservas);
                 }, (error) => {
                     console.error('Error en listener de citas:', error);
@@ -1276,29 +1271,21 @@
         //  INICIALIZACIÓN
         // ============================================================
         async function init() {
-            // Cargar configuración de servicios
             await loadServices();
-
-            // Cargar datos del formulario desde cookies
             loadFormDataFromCookies();
 
-            // Autenticación anónima (para poder leer/escribir según reglas)
             try {
                 await auth.signInAnonymously();
                 authReady = true;
                 console.log('Usuario anónimo autenticado');
-                // Iniciar listener en tiempo real
                 startRealtimeListener();
             } catch (error) {
                 console.error('Error en autenticación anónima:', error);
-                // Si falla la autenticación, igual intentamos leer (quizás reglas lo permitan)
                 startRealtimeListener();
             }
 
-            // Renderizar tabla inicial
             await renderTable();
 
-            // Eventos de navegación de semanas
             document.getElementById('prevWeekBtn').addEventListener('click', function() {
                 currentWeekStart.setDate(currentWeekStart.getDate() - 7);
                 renderTable();
@@ -1308,7 +1295,6 @@
                 renderTable();
             });
 
-            // Cookies
             document.getElementById('acceptCookiesBtn').addEventListener('click', function() {
                 setCookie('cookies_aceptadas', 'true', 365);
                 document.getElementById('cookieNotice').style.display = 'none';
@@ -1326,7 +1312,6 @@
                 alert('🗑️ Cookies eliminadas. Los datos han sido borrados.');
             });
 
-            // Popup
             popupCloseBtn.addEventListener('click', closePopup);
             popupOverlay.addEventListener('click', function(e) {
                 if (e.target === this) closePopup();
@@ -1337,12 +1322,10 @@
                 }
             });
 
-            // Guardar datos del formulario en cookies al escribir
             nombreInput.addEventListener('input', saveFormDataToCookies);
             emailInput.addEventListener('input', saveFormDataToCookies);
             telefonoInput.addEventListener('input', saveFormDataToCookies);
 
-            // Envío del formulario
             document.getElementById('reservationForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
 
@@ -1385,7 +1368,6 @@
                     saveFormDataToCookies();
                     sendWhatsAppMessage(nombre, email, telefono, selected.value, servicio);
                     showConfirmationPopup(nombre, email, telefono, selected.value, servicio);
-                    // La tabla se actualizará sola gracias al listener
                 } else {
                     alert('❌ Error al guardar la reserva: ' + (result.error || 'Intenta nuevamente.'));
                 }
@@ -1394,12 +1376,10 @@
                 submitBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Reservar';
             });
 
-            // Ocultar cookie notice si ya se aceptaron
             if (getCookie('cookies_aceptadas') === 'true') {
                 document.getElementById('cookieNotice').style.display = 'none';
             }
 
-            // Actualización automática cada minuto (por si el listener falla)
             setInterval(function() {
                 if (allReservations.length > 0) {
                     updateTableWithReservations(allReservations);
@@ -1407,7 +1387,6 @@
             }, 60000);
         }
 
-        // Arrancar
         init();
     </script>
 </body>
