@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
     <style>
-        /* ===== ESTILOS BASE ===== */
+        /* ===== ESTILOS (iguales que antes, sin cambios) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -141,7 +141,6 @@
             border: 1px solid #444444;
         }
 
-        /* ===== MENSAJE DE HORARIO SELECCIONADO ===== */
         .selected-display {
             background: #1f1f1f;
             padding: 0.4rem 1rem;
@@ -178,7 +177,6 @@
             font-weight: 400;
         }
 
-        /* ===== LAYOUT DE DOS COLUMNAS ===== */
         .two-column-layout {
             display: flex;
             flex-wrap: wrap;
@@ -197,7 +195,6 @@
             flex-direction: column;
         }
 
-        /* ===== TABLA CON CELDAS MÁS ALTAS ===== */
         .table-responsive {
             overflow-x: auto;
             border-radius: 4px;
@@ -237,7 +234,7 @@
             vertical-align: super;
         }
         td {
-            padding: 0.25rem 0.1rem; /* Aumentado vertical */
+            padding: 0.25rem 0.1rem;
             text-align: center;
             border-bottom: 1px solid #333333;
             vertical-align: middle;
@@ -281,7 +278,7 @@
         .time-slot i { margin-right: 2px; color: #777777; font-size: 0.65rem; }
         .slot-cell {
             position: relative;
-            height: 30px; /* Aumentado de 28px a 30px */
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -336,7 +333,6 @@
         }
         .afternoon-row td:first-child { text-align: right; padding-right: 3px; font-weight: 600; }
 
-        /* ===== FORMULARIO (lado derecho) ===== */
         .right-col .form-grid {
             display: flex;
             flex-direction: column;
@@ -434,7 +430,6 @@
         }
         .btn-submit i { font-size: 0.75rem; color: #1a1a1a; }
 
-        /* ===== POPUP ===== */
         .popup-overlay {
             display: none;
             position: fixed;
@@ -564,7 +559,6 @@
         }
         .popup-container .popup-close-btn:hover { background: #555555; border-color: #666666; }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .card { padding: 1.5rem; }
             .two-column-layout { gap: 1rem; }
@@ -679,16 +673,13 @@
             <div class="week-label" id="weekLabel">Cargando...</div>
         </div>
 
-        <!-- Mensaje de horario seleccionado -->
         <div class="selected-display" id="selectedDisplay">
             <i class="fas fa-check-circle"></i>
             <span class="label-text">Horario seleccionado:</span>
             <span class="selected-text" id="selectedText">—</span>
         </div>
 
-        <!-- LAYOUT DE DOS COLUMNAS -->
         <div class="two-column-layout">
-            <!-- COLUMNA IZQUIERDA: TABLA -->
             <div class="left-col">
                 <div class="table-responsive">
                     <table>
@@ -703,7 +694,6 @@
                 </div>
             </div>
 
-            <!-- COLUMNA DERECHA: FORMULARIO -->
             <div class="right-col">
                 <form id="reservationForm">
                     <div class="form-grid">
@@ -722,7 +712,6 @@
                             <input type="tel" id="telefono" placeholder="+34 600 000 000" autocomplete="off" required>
                             <span class="hint">Incluye código de país</span>
                         </div>
-                        <!-- Campo de servicio (opcional, se carga desde Firestore) -->
                         <div class="field-group" id="serviceFieldGroup" style="display:none;">
                             <label for="servicio"><i class="fas fa-concierge-bell"></i> Servicio</label>
                             <select id="servicio">
@@ -740,10 +729,8 @@
                 </form>
             </div>
         </div>
-        <!-- FIN LAYOUT DOS COLUMNAS -->
     </div>
 
-    <!-- POPUP -->
     <div class="popup-overlay" id="popupOverlay">
         <div class="popup-container">
             <div class="popup-header">
@@ -774,9 +761,7 @@
     </div>
 
     <script>
-        // ============================================================
-        //  CONFIGURACIÓN FIREBASE (misma que el panel admin)
-        // ============================================================
+        // ===== CONFIGURACIÓN FIREBASE =====
         const firebaseConfig = {
             apiKey: "AIzaSyBCXprwlz801V0co99vpWwm17WUbWYGkk8",
             authDomain: "reservascitas1.firebaseapp.com",
@@ -791,9 +776,7 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        // ============================================================
-        //  VARIABLES GLOBALES
-        // ============================================================
+        // ===== VARIABLES GLOBALES =====
         const TIMEZONE = 'America/Argentina/Buenos_Aires';
         const daysOfWeek = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
         const morningHours = [9, 10, 11, 12];
@@ -804,11 +787,10 @@
 
         let currentWeekStart = getMonday(new Date());
         let allReservations = [];
-        let isAutoUpdating = false;
         let unsubscribeCitas = null;
-        let authReady = false;
+        let savingInProgress = false; // Bandera para evitar el alert
 
-        // DOM references
+        // DOM
         const tbody = document.getElementById('tablaHorarios');
         const headerRow = document.getElementById('headerRow');
         const weekLabel = document.getElementById('weekLabel');
@@ -825,9 +807,7 @@
         const popupCloseBtn = document.getElementById('popupCloseBtn');
         const updateIndicator = document.getElementById('updateIndicator');
 
-        // ============================================================
-        //  FUNCIONES DE COOKIES
-        // ============================================================
+        // ===== COOKIES =====
         function setCookie(name, value, days) {
             var date = new Date();
             date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -847,9 +827,7 @@
             document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         }
 
-        // ============================================================
-        //  FUNCIONES DE FECHA / HORA
-        // ============================================================
+        // ===== FECHAS =====
         function getDatePartsInTimezone(date) {
             const formatter = new Intl.DateTimeFormat('en-GB', {
                 timeZone: TIMEZONE,
@@ -917,9 +895,7 @@
                    date.getDate() === today.getDate();
         }
 
-        // ============================================================
-        //  ACTUALIZAR TABLA CON RESERVAS
-        // ============================================================
+        // ===== ACTUALIZAR TABLA =====
         function updateTableWithReservations(reservas) {
             var reservados = new Set();
             reservas.forEach(function(r) {
@@ -952,25 +928,28 @@
                 }
             });
 
+            // ⚠️ Solo mostrar alert si NO estamos guardando
             var selected = document.querySelector('input[name="slot"]:checked');
-            if (selected && selected.disabled) {
+            if (selected && selected.disabled && !savingInProgress) {
                 selected.checked = false;
                 updateFeedback();
                 deleteCookie('reserva_horario');
                 alert('⚠️ El horario que habías seleccionado fue reservado por otra persona. Por favor, elige otro.');
+            } else if (selected && selected.disabled && savingInProgress) {
+                // Si estamos guardando, solo deseleccionar sin alert
+                selected.checked = false;
+                updateFeedback();
+                deleteCookie('reserva_horario');
             }
         }
 
-        // ============================================================
-        //  RENDERIZAR TABLA
-        // ============================================================
+        // ===== RENDERIZAR TABLA =====
         async function renderTable() {
             updateIndicator.classList.add('show');
             const startTime = Date.now();
 
             var today = getToday();
 
-            // Cabecera
             var headerHtml = '<th>Hora</th>';
             for (var i = 0; i < daysOfWeek.length; i++) {
                 var date = getDateForWeekday(currentWeekStart, i);
@@ -981,10 +960,8 @@
             }
             headerRow.innerHTML = headerHtml;
 
-            // Cuerpo
             var bodyHtml = '';
 
-            // Horas de la mañana
             morningHours.forEach(function(hour) {
                 bodyHtml += '<tr><td class="time-slot"><i class="far fa-clock"></i> ' + hour + ':00</td>';
                 for (var i = 0; i < daysOfWeek.length; i++) {
@@ -1009,7 +986,6 @@
                 bodyHtml += '</tr>';
             });
 
-            // Fila "TARDE"
             bodyHtml += '<tr class="afternoon-row">';
             for (var i = 0; i <= 6; i++) {
                 var dayIndex = (i === 0) ? 0 : i - 1;
@@ -1031,7 +1007,6 @@
             }
             bodyHtml += '</tr>';
 
-            // Horas de la tarde
             afternoonHours.forEach(function(hour) {
                 bodyHtml += '<tr><td class="time-slot"><i class="far fa-clock"></i> ' + hour + ':00</td>';
                 for (var i = 0; i < daysOfWeek.length; i++) {
@@ -1058,16 +1033,13 @@
 
             tbody.innerHTML = bodyHtml;
 
-            // Actualizar etiqueta de semana
             var monthName = getMonthName(currentWeekStart.getMonth());
             weekLabel.textContent = monthName + ' ' + currentWeekStart.getFullYear();
 
-            // Aplicar estado de reservas
             if (allReservations.length > 0) {
                 updateTableWithReservations(allReservations);
             }
 
-            // Eventos de cambio en radios
             var radios = document.querySelectorAll('input[name="slot"]');
             radios.forEach(function(radio) {
                 radio.addEventListener('change', function() {
@@ -1076,7 +1048,6 @@
                 });
             });
 
-            // Restaurar selección guardada en cookie
             var horarioGuardado = getCookie('reserva_horario');
             if (horarioGuardado) {
                 radios.forEach(function(radio) {
@@ -1095,9 +1066,7 @@
             }, remaining);
         }
 
-        // ============================================================
-        //  FEEDBACK DE SELECCIÓN
-        // ============================================================
+        // ===== FEEDBACK =====
         function updateFeedback() {
             var checked = document.querySelector('input[name="slot"]:checked');
             if (checked && !checked.disabled) {
@@ -1108,9 +1077,7 @@
             }
         }
 
-        // ============================================================
-        //  GUARDAR / CARGAR DATOS DEL FORMULARIO EN COOKIES
-        // ============================================================
+        // ===== COOKIES FORM =====
         function saveFormDataToCookies() {
             var nombre = nombreInput.value.trim();
             var email = emailInput.value.trim();
@@ -1136,9 +1103,7 @@
             if (telefono) telefonoInput.value = telefono;
         }
 
-        // ============================================================
-        //  POPUP DE CONFIRMACIÓN
-        // ============================================================
+        // ===== POPUP =====
         function showConfirmationPopup(nombre, email, telefono, horario, servicio) {
             popupDetails.innerHTML = '';
             var fields = [
@@ -1163,9 +1128,7 @@
             document.body.style.overflow = '';
         }
 
-        // ============================================================
-        //  WHATSAPP
-        // ============================================================
+        // ===== WHATSAPP =====
         function sendWhatsAppMessage(nombre, email, telefono, horario, servicio) {
             var message = '📋 *NUEVA RESERVA*\n\n' +
                 '👤 *Nombre:* ' + nombre + '\n' +
@@ -1178,9 +1141,7 @@
             window.open(url, '_blank');
         }
 
-        // ============================================================
-        //  CONFIGURACIÓN DE SERVICIOS
-        // ============================================================
+        // ===== SERVICIOS =====
         async function loadServices() {
             try {
                 const doc = await db.collection('config').doc('servicios').get();
@@ -1212,9 +1173,7 @@
             }
         }
 
-        // ============================================================
-        //  AUTENTICACIÓN ANÓNIMA + LISTENER EN TIEMPO REAL
-        // ============================================================
+        // ===== LISTENER EN TIEMPO REAL =====
         function startRealtimeListener() {
             if (unsubscribeCitas) {
                 unsubscribeCitas();
@@ -1245,9 +1204,7 @@
                 });
         }
 
-        // ============================================================
-        //  ENVIAR RESERVA A FIRESTORE
-        // ============================================================
+        // ===== GUARDAR RESERVA =====
         async function saveReservationToFirestore(data) {
             try {
                 const docRef = await db.collection('citas').add({
@@ -1267,16 +1224,13 @@
             }
         }
 
-        // ============================================================
-        //  INICIALIZACIÓN
-        // ============================================================
+        // ===== INICIALIZACIÓN =====
         async function init() {
             await loadServices();
             loadFormDataFromCookies();
 
             try {
                 await auth.signInAnonymously();
-                authReady = true;
                 console.log('Usuario anónimo autenticado');
                 startRealtimeListener();
             } catch (error) {
@@ -1362,15 +1316,29 @@
                     servicio: servicio
                 };
 
+                // 🔥 ACTIVAR BANDERA PARA EVITAR ALERT
+                savingInProgress = true;
+
                 var result = await saveReservationToFirestore(data);
 
                 if (result.success) {
+                    // Limpiar selección para evitar alert
+                    if (selected) {
+                        selected.checked = false;
+                        updateFeedback();
+                        deleteCookie('reserva_horario');
+                    }
                     saveFormDataToCookies();
-                    sendWhatsAppMessage(nombre, email, telefono, selected.value, servicio);
-                    showConfirmationPopup(nombre, email, telefono, selected.value, servicio);
+                    sendWhatsAppMessage(nombre, email, telefono, selected ? selected.value : fecha + ' ' + hora, servicio);
+                    showConfirmationPopup(nombre, email, telefono, selected ? selected.value : fecha + ' ' + hora, servicio);
                 } else {
                     alert('❌ Error al guardar la reserva: ' + (result.error || 'Intenta nuevamente.'));
                 }
+
+                // Desactivar bandera después de un breve tiempo
+                setTimeout(function() {
+                    savingInProgress = false;
+                }, 2000);
 
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Reservar';
