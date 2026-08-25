@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
     <style>
-        /* ===== ESTILOS (iguales que antes, sin cambios) ===== */
+        /* ===== ESTILOS BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -430,6 +430,7 @@
         }
         .btn-submit i { font-size: 0.75rem; color: #1a1a1a; }
 
+        /* ===== POPUP SIN SCROLL ===== */
         .popup-overlay {
             display: none;
             position: fixed;
@@ -441,18 +442,17 @@
             z-index: 9999;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(8px);
-            padding: 2rem;
+            padding: 1rem;
         }
         .popup-overlay.show { display: flex; }
         .popup-container {
             background: #2a2a2a;
             border-radius: 8px;
             border: 1px solid #444444;
-            padding: 2.5rem 3rem;
-            max-width: 500px;
+            padding: 1.5rem 2rem;
+            max-width: 480px;
             width: 100%;
-            max-height: 85vh;
+            max-height: 90vh;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
             animation: popupFadeIn 0.4s ease;
             display: flex;
@@ -464,42 +464,46 @@
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
         .popup-container .popup-header { flex-shrink: 0; }
-        .popup-container .popup-icon { text-align: center; font-size: 3.5rem; color: #4caf50; margin-bottom: 0.5rem; }
-        .popup-container h2 { color: #e8e8e8; text-align: center; font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .popup-container .popup-icon {
+            text-align: center;
+            font-size: 2.8rem;
+            color: #4caf50;
+            margin-bottom: 0.2rem;
+        }
+        .popup-container h2 {
+            color: #e8e8e8;
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 0.2rem;
+        }
         .popup-container .popup-subtitle {
             color: #9a9a9a;
             text-align: center;
-            font-size: 0.9rem;
-            margin-bottom: 1.2rem;
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
             border-bottom: 1px solid #3a3a3a;
-            padding-bottom: 0.8rem;
+            padding-bottom: 0.6rem;
         }
         .popup-container .popup-body {
-            flex: 1 1 auto;
-            overflow-y: auto;
-            padding-right: 0.5rem;
-            margin-right: -0.5rem;
-            scrollbar-width: thin;
-            scrollbar-color: #555555 #1e1e1e;
+            flex: 0 1 auto;
+            overflow: visible;
+            padding: 0;
+            margin: 0;
         }
-        .popup-container .popup-body::-webkit-scrollbar { width: 6px; border-radius: 3px; }
-        .popup-container .popup-body::-webkit-scrollbar-track { background: #1e1e1e; border-radius: 3px; }
-        .popup-container .popup-body::-webkit-scrollbar-thumb { background: #555555; border-radius: 3px; }
-        .popup-container .popup-body::-webkit-scrollbar-thumb:hover { background: #777777; }
         .popup-container .popup-details {
             background: #222222;
             border-radius: 4px;
-            padding: 1rem 1.2rem;
-            margin-bottom: 1rem;
+            padding: 0.6rem 1rem;
+            margin-bottom: 0.6rem;
             border: 1px solid #353535;
         }
         .popup-container .popup-details .detail-row {
             display: flex;
             justify-content: space-between;
-            padding: 0.3rem 0;
+            padding: 0.2rem 0;
             border-bottom: 1px solid #333333;
             color: #c0c0c0;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
         .popup-container .popup-details .detail-row:last-child { border-bottom: none; }
         .popup-container .popup-details .detail-row .label { color: #888888; font-weight: 500; }
@@ -513,41 +517,41 @@
         .popup-container .popup-notice {
             background: #2a1a1a;
             border-left: 3px solid #f44336;
-            padding: 0.6rem 0.8rem;
+            padding: 0.4rem 0.6rem;
             border-radius: 2px;
-            margin-bottom: 1rem;
-            font-size: 0.8rem;
+            margin-bottom: 0.6rem;
+            font-size: 0.75rem;
             color: #d0a0a0;
         }
-        .popup-container .popup-notice i { color: #f44336; margin-right: 6px; }
+        .popup-container .popup-notice i { color: #f44336; margin-right: 4px; }
         .popup-container .popup-notice strong { color: #f0c0c0; }
         .popup-container .popup-whatsapp {
             background: #1a2a1a;
             border: 1px solid #2a4a2a;
             border-radius: 4px;
-            padding: 0.6rem 0.8rem;
-            margin-bottom: 1rem;
+            padding: 0.4rem 0.6rem;
+            margin-bottom: 0.6rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             color: #a0c0a0;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
-        .popup-container .popup-whatsapp i { color: #25d366; font-size: 1.2rem; flex-shrink: 0; }
+        .popup-container .popup-whatsapp i { color: #25d366; font-size: 1.1rem; flex-shrink: 0; }
         .popup-container .popup-whatsapp .whatsapp-number { color: #c0e0c0; font-weight: 500; }
         .popup-container .popup-footer {
             flex-shrink: 0;
-            padding-top: 0.5rem;
+            padding-top: 0.3rem;
             border-top: 1px solid #353535;
         }
         .popup-container .popup-close-btn {
             background: #444444;
             border: 1px solid #555555;
             color: #e8e8e8;
-            padding: 0.5rem 1.5rem;
+            padding: 0.4rem 1.2rem;
             border-radius: 4px;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: 0.15s;
             width: 100%;
@@ -555,10 +559,11 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            margin-top: 0.5rem;
+            margin-top: 0.2rem;
         }
         .popup-container .popup-close-btn:hover { background: #555555; border-color: #666666; }
 
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .card { padding: 1.5rem; }
             .two-column-layout { gap: 1rem; }
@@ -601,9 +606,17 @@
                 gap: 4px;
                 min-height: 32px;
             }
-            .popup-container { padding: 1.5rem 1.2rem; max-height: 90vh; }
-            .popup-container .popup-details .detail-row { font-size: 0.75rem; flex-direction: column; align-items: flex-start; gap: 0.1rem; }
+            .popup-container {
+                padding: 1.2rem 1rem;
+                max-width: 95%;
+            }
+            .popup-container .popup-icon { font-size: 2.2rem; }
+            .popup-container h2 { font-size: 1.1rem; }
+            .popup-container .popup-subtitle { font-size: 0.7rem; }
+            .popup-container .popup-details .detail-row { font-size: 0.7rem; flex-direction: column; align-items: flex-start; gap: 0.1rem; }
             .popup-container .popup-details .detail-row .value { text-align: left; max-width: 100%; }
+            .popup-container .popup-notice { font-size: 0.7rem; padding: 0.3rem 0.5rem; }
+            .popup-container .popup-whatsapp { font-size: 0.7rem; padding: 0.3rem 0.5rem; }
         }
 
         @media (max-width: 480px) {
@@ -634,15 +647,19 @@
                 gap: 3px;
             }
             .selected-display .selected-text { padding: 0 0.3rem; font-size: 0.65rem; }
-            .popup-container { padding: 1rem 0.8rem; border-radius: 4px; max-height: 92vh; max-width: 95%; }
+            .popup-container {
+                padding: 0.8rem 0.6rem;
+                max-width: 98%;
+                border-radius: 4px;
+            }
+            .popup-container .popup-icon { font-size: 2rem; }
             .popup-container h2 { font-size: 1rem; }
-            .popup-container .popup-icon { font-size: 2.5rem; }
-            .popup-container .popup-subtitle { font-size: 0.7rem; }
-            .popup-container .popup-details { padding: 0.6rem 0.8rem; }
-            .popup-container .popup-details .detail-row { font-size: 0.7rem; padding: 0.2rem 0; }
-            .popup-container .popup-notice { font-size: 0.7rem; padding: 0.4rem 0.6rem; }
-            .popup-container .popup-whatsapp { font-size: 0.7rem; padding: 0.4rem 0.6rem; }
-            .popup-container .popup-close-btn { font-size: 0.75rem; padding: 0.4rem 1rem; }
+            .popup-container .popup-subtitle { font-size: 0.65rem; padding-bottom: 0.3rem; margin-bottom: 0.4rem; }
+            .popup-container .popup-details { padding: 0.4rem 0.6rem; }
+            .popup-container .popup-details .detail-row { font-size: 0.65rem; padding: 0.15rem 0; }
+            .popup-container .popup-notice { font-size: 0.65rem; padding: 0.2rem 0.4rem; }
+            .popup-container .popup-whatsapp { font-size: 0.65rem; padding: 0.2rem 0.4rem; }
+            .popup-container .popup-close-btn { font-size: 0.7rem; padding: 0.3rem 0.8rem; }
         }
     </style>
 </head>
@@ -731,6 +748,7 @@
         </div>
     </div>
 
+    <!-- ===== POPUP SIN SCROLL ===== -->
     <div class="popup-overlay" id="popupOverlay">
         <div class="popup-container">
             <div class="popup-header">
@@ -742,13 +760,13 @@
                 <div class="popup-details" id="popupDetails"></div>
                 <div class="popup-notice">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <strong>Importante:</strong> En caso de no poder concurrir, por favor avisa con <strong>24 horas de anticipación</strong> para poder reasignar el turno.
+                    <strong>Importante:</strong> Avisa con <strong>24h</strong> de anticipación si no puedes asistir.
                 </div>
                 <div class="popup-whatsapp">
                     <i class="fab fa-whatsapp"></i>
                     <div>
                         <strong>Confirmación enviada por WhatsApp</strong><br>
-                        <span>Se ha enviado un mensaje con los datos al número <span class="whatsapp-number">+5493518692251</span></span>
+                        <span>Mensaje enviado al <span class="whatsapp-number">+5493518692251</span></span>
                     </div>
                 </div>
             </div>
@@ -788,7 +806,7 @@
         let currentWeekStart = getMonday(new Date());
         let allReservations = [];
         let unsubscribeCitas = null;
-        let savingInProgress = false; // Bandera para evitar el alert
+        let savingInProgress = false;
 
         // DOM
         const tbody = document.getElementById('tablaHorarios');
@@ -928,7 +946,6 @@
                 }
             });
 
-            // ⚠️ Solo mostrar alert si NO estamos guardando
             var selected = document.querySelector('input[name="slot"]:checked');
             if (selected && selected.disabled && !savingInProgress) {
                 selected.checked = false;
@@ -936,7 +953,6 @@
                 deleteCookie('reserva_horario');
                 alert('⚠️ El horario que habías seleccionado fue reservado por otra persona. Por favor, elige otro.');
             } else if (selected && selected.disabled && savingInProgress) {
-                // Si estamos guardando, solo deseleccionar sin alert
                 selected.checked = false;
                 updateFeedback();
                 deleteCookie('reserva_horario');
@@ -1316,13 +1332,11 @@
                     servicio: servicio
                 };
 
-                // 🔥 ACTIVAR BANDERA PARA EVITAR ALERT
                 savingInProgress = true;
 
                 var result = await saveReservationToFirestore(data);
 
                 if (result.success) {
-                    // Limpiar selección para evitar alert
                     if (selected) {
                         selected.checked = false;
                         updateFeedback();
@@ -1335,7 +1349,6 @@
                     alert('❌ Error al guardar la reserva: ' + (result.error || 'Intenta nuevamente.'));
                 }
 
-                // Desactivar bandera después de un breve tiempo
                 setTimeout(function() {
                     savingInProgress = false;
                 }, 2000);
