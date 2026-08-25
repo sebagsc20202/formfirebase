@@ -19,15 +19,19 @@
             background: #f5f0ff;
             min-height: 100vh;
             width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.5rem;
             scrollbar-width: none;
             -ms-overflow-style: none;
-            overflow: hidden; /* Evita scroll en el body */
+            overflow: hidden;
         }
         body::-webkit-scrollbar {
             display: none;
         }
 
-        /* ===== CONTENEDOR PRINCIPAL FIJO Y CENTRADO ===== */
+        /* ===== CONTENEDOR PRINCIPAL CENTRADO ===== */
         .card {
             position: fixed;
             top: 50%;
@@ -35,20 +39,20 @@
             transform: translate(-50%, -50%) scale(0.995);
             max-width: 1200px;
             width: 100%;
-            max-height: 96vh;          /* Altura máxima para no salirse de la pantalla */
+            max-height: 98vh;           /* Casi toda la pantalla */
             background: rgba(255, 255, 255, 0.85);
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(123, 47, 190, 0.15), 0 8px 20px rgba(0,0,0,0.05);
-            padding: 2rem;
+            padding: 0.8rem 1.2rem;     /* Padding reducido */
             border: 1px solid rgba(216, 189, 226, 0.5);
             backdrop-filter: blur(2px);
-            overflow-y: auto;          /* Scroll interno si el contenido es muy alto */
+            overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: #d7bde2 transparent;
             transition: all 0.2s;
         }
         .card::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
         }
         .card::-webkit-scrollbar-track {
             background: transparent;
@@ -61,178 +65,203 @@
             background: #9b59b6;
         }
 
-        /* ===== RESTO DE ESTILOS (sin cambios) ===== */
+        /* ===== CABECERA ===== */
         h1 {
-            font-size: 2rem;
+            font-size: 1.6rem;          /* Reducido */
             font-weight: 600;
             color: #3d1a5c;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.2rem;
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 8px;
+            flex-shrink: 0;
         }
-        h1 i { color: #7b2fbe; font-size: 2rem; }
+        h1 i { color: #7b2fbe; font-size: 1.6rem; }
         .update-indicator {
             display: none;
             align-items: center;
-            gap: 6px;
-            font-size: 0.7rem;
+            gap: 4px;
+            font-size: 0.6rem;
             color: #6b4a8a;
-            font-weight: 400;
-            padding: 0.15rem 0.8rem;
+            padding: 0.1rem 0.6rem;
             background: rgba(243, 232, 255, 0.8);
             border-radius: 30px;
             border: 1px solid #d7bde2;
+            flex-shrink: 0;
         }
         .update-indicator.show { display: inline-flex; }
         .update-indicator i {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: #7b2fbe;
             animation: clockPulse 1.2s ease-in-out infinite;
         }
-        .update-indicator span { font-size: 0.7rem; color: #6b4a8a; }
+        .update-indicator span { font-size: 0.6rem; color: #6b4a8a; }
         @keyframes clockPulse {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.4; transform: scale(0.85); }
         }
 
+        /* ===== COOKIE ===== */
         .cookie-notice {
             background: rgba(248, 240, 255, 0.8);
             border: 1px solid #d7bde2;
-            border-radius: 12px;
-            padding: 0.5rem 1rem;
-            margin-bottom: 1rem;
+            border-radius: 10px;
+            padding: 0.2rem 0.8rem;
+            margin-bottom: 0.4rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.6rem;
+            gap: 0.3rem;
+            flex-shrink: 0;
         }
-        .cookie-notice p { color: #3d1a5c; font-size: 0.85rem; margin: 0; }
-        .cookie-notice p i { color: #7b2fbe; margin-right: 8px; }
+        .cookie-notice p {
+            color: #3d1a5c;
+            font-size: 0.7rem;
+            margin: 0;
+        }
+        .cookie-notice p i { color: #7b2fbe; margin-right: 4px; }
         .cookie-notice .cookie-btn {
             background: rgba(238, 229, 247, 0.8);
             border: 1px solid #d7bde2;
             color: #3d1a5c;
-            padding: 0.2rem 1rem;
+            padding: 0.1rem 0.8rem;
             border-radius: 30px;
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             transition: 0.15s;
         }
         .cookie-notice .cookie-btn:hover { background: #d7bde2; border-color: #9b59b6; }
 
+        /* ===== NAVEGACIÓN ===== */
         .week-navigation {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
-            margin-bottom: 0.5rem;
+            gap: 0.4rem;
+            margin-bottom: 0.2rem;
             flex-wrap: wrap;
             justify-content: space-between;
+            flex-shrink: 0;
         }
-        .week-nav-buttons { display: flex; gap: 0.4rem; }
+        .week-nav-buttons { display: flex; gap: 0.3rem; }
         .week-nav-buttons button {
             background: rgba(243, 232, 255, 0.8);
             border: 1px solid #d7bde2;
             border-radius: 30px;
-            padding: 0.2rem 1rem;
+            padding: 0.1rem 0.8rem;
             font-weight: 500;
             color: #3d1a5c;
             cursor: pointer;
             transition: 0.15s;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
         .week-nav-buttons button:hover { background: #d7bde2; border-color: #9b59b6; }
-        .week-nav-buttons button i { font-size: 0.7rem; color: #7b2fbe; }
+        .week-nav-buttons button i { font-size: 0.6rem; color: #7b2fbe; }
         .week-label {
             font-weight: 600;
             color: #3d1a5c;
             background: rgba(243, 232, 255, 0.8);
-            padding: 0.15rem 1.2rem;
+            padding: 0.1rem 1rem;
             border-radius: 30px;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             border: 1px solid #d7bde2;
         }
 
+        /* ===== MENSAJE DE SELECCIÓN ===== */
         .selected-display {
             background: rgba(243, 232, 255, 0.8);
-            padding: 0.3rem 1rem;
+            padding: 0.15rem 0.8rem;
             border-radius: 30px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #3d1a5c;
             border: 1px solid #d7bde2;
             display: none;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin-bottom: 0.7rem;
+            gap: 6px;
+            margin-bottom: 0.3rem;
             width: 100%;
-            min-height: 36px;
+            min-height: 28px;
+            flex-shrink: 0;
         }
         .selected-display.show { display: flex; }
-        .selected-display i { color: #4caf50; font-size: 1rem; }
+        .selected-display i { color: #4caf50; font-size: 0.85rem; }
         .selected-display .selected-text {
             font-weight: 600;
             background: #ffffff;
-            padding: 0 0.8rem;
+            padding: 0 0.6rem;
             border-radius: 30px;
             border: 1px solid #d7bde2;
             color: #3d1a5c;
         }
         .selected-display .label-text { color: #6b4a8a; }
 
+        /* ===== LAYOUT DOS COLUMNAS ===== */
         .two-column-layout {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem;
+            gap: 0.8rem;               /* Gap reducido */
             align-items: stretch;
-            margin-top: 0.2rem;
+            flex: 1 1 auto;
+            min-height: 0;
         }
-        .left-col { flex: 2; min-width: 300px; }
-        .right-col { flex: 1; min-width: 240px; display: flex; flex-direction: column; }
+        .left-col {
+            flex: 2;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+        .right-col {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+        }
 
+        /* ===== TABLA ===== */
         .table-responsive {
             overflow-x: auto;
-            border-radius: 16px;
+            border-radius: 14px;
             border: 1px solid #e8d5f5;
             background: rgba(250, 250, 255, 0.7);
             scrollbar-width: none;
             -ms-overflow-style: none;
-            height: 100%;
+            flex: 1 1 auto;
+            min-height: 0;
         }
         .table-responsive::-webkit-scrollbar { display: none; }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.8rem;
-            min-width: 450px;
+            font-size: 0.75rem;
+            min-width: 400px;
             background: transparent;
         }
         th {
             background: rgba(243, 232, 255, 0.7);
             color: #3d1a5c;
             font-weight: 600;
-            padding: 0.3rem 0.3rem;
+            padding: 0.2rem 0.2rem;
             text-align: center;
             border-bottom: 2px solid #d7bde2;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
         }
-        th:first-child { min-width: 50px; padding: 0.3rem 0.1rem; }
+        th:first-child { min-width: 45px; padding: 0.2rem 0.05rem; }
         th.today-header { background: #e8d5f5; position: relative; }
         th.today-header::after {
             content: '●';
             color: #7b2fbe;
-            font-size: 0.5rem;
-            margin-left: 4px;
+            font-size: 0.45rem;
+            margin-left: 3px;
             vertical-align: super;
         }
         td {
-            padding: 0.15rem 0.1rem;
+            padding: 0.2rem 0.08rem;    /* Aumentado ligeramente */
             text-align: center;
             border-bottom: 1px solid rgba(238, 229, 247, 0.7);
             vertical-align: middle;
@@ -252,7 +281,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: #e74c3c;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: bold;
             opacity: 0.8;
         }
@@ -270,22 +299,22 @@
             font-weight: 500;
             color: #3d1a5c;
             background: rgba(243, 232, 255, 0.5);
-            font-size: 0.7rem;
-            padding: 0.1rem 0.02rem;
+            font-size: 0.65rem;
+            padding: 0.08rem 0.02rem;
         }
-        .time-slot i { margin-right: 4px; color: #7b2fbe; font-size: 0.65rem; }
+        .time-slot i { margin-right: 3px; color: #7b2fbe; font-size: 0.6rem; }
 
         .slot-cell {
             position: relative;
-            height: 26px;
+            height: 30px;               /* Aumentado a 30px */
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .slot-cell input[type="radio"] {
             appearance: none;
-            width: 15px;
-            height: 15px;
+            width: 16px;
+            height: 16px;
             border: 2px solid #ccc;
             border-radius: 50%;
             outline: none;
@@ -324,8 +353,8 @@
             position: absolute;
             top: 3px;
             left: 3px;
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
             background: #fff;
             border-radius: 50%;
         }
@@ -341,24 +370,25 @@
             font-weight: 500;
             color: #3d1a5c;
             letter-spacing: 0.5px;
-            padding: 0.1rem 0.02rem;
+            padding: 0.08rem 0.02rem;
             border-bottom: 2px solid #d7bde2;
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             text-transform: uppercase;
         }
         .afternoon-row td:first-child {
             text-align: right;
-            padding-right: 6px;
+            padding-right: 4px;
             font-weight: 600;
         }
 
+        /* ===== FORMULARIO ===== */
         .right-col .form-grid {
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
+            gap: 0.3rem;               /* Gap reducido */
             background: rgba(250, 250, 255, 0.7);
-            padding: 0.8rem 1rem;
-            border-radius: 16px;
+            padding: 0.4rem 0.7rem;     /* Padding reducido */
+            border-radius: 14px;
             border: 1px solid #e8d5f5;
             height: 100%;
             justify-content: space-between;
@@ -366,52 +396,52 @@
         .field-group {
             display: flex;
             flex-direction: column;
-            gap: 0.1rem;
+            gap: 0.05rem;
             width: 100%;
         }
         .field-group label {
             font-weight: 600;
-            font-size: 0.75rem;
+            font-size: 0.6rem;         /* Reducido */
             text-transform: uppercase;
-            letter-spacing: 0.03em;
+            letter-spacing: 0.02em;
             color: #6b4a8a;
         }
-        .field-group label i { color: #7b2fbe; margin-right: 6px; }
+        .field-group label i { color: #7b2fbe; margin-right: 4px; }
         .field-group input, .field-group select {
-            padding: 0.4rem 0.8rem;
+            padding: 0.2rem 0.5rem;     /* Padding reducido */
             border: 1px solid #d7bde2;
-            border-radius: 10px;
-            font-size: 0.9rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
             background: rgba(255, 255, 255, 0.9);
             transition: 0.2s;
             outline: none;
             width: 100%;
             color: #2d2d2d;
-            height: 38px;
+            height: 30px;              /* Altura reducida */
         }
         .field-group input:focus, .field-group select:focus {
             border-color: #7b2fbe;
             box-shadow: 0 0 0 3px rgba(123, 47, 190, 0.12);
         }
-        .field-group input::placeholder { color: #aaa; }
+        .field-group input::placeholder { color: #aaa; font-size: 0.75rem; }
         .field-group select option { background: #fff; }
         .field-group .hint {
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             color: #999;
-            margin-top: 1px;
+            margin-top: 0px;
         }
 
         .btn-wrapper {
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            gap: 0.1rem;
+            gap: 0.05rem;
             width: 100%;
             margin-top: auto;
         }
         .btn-wrapper .btn-label {
             font-weight: 600;
-            font-size: 0.75rem;
+            font-size: 0.6rem;
             text-transform: uppercase;
             color: transparent;
             visibility: hidden;
@@ -421,20 +451,20 @@
             background: linear-gradient(135deg, #7b2fbe 0%, #9b59b6 100%);
             border: none;
             color: #ffffff;
-            padding: 0.4rem 1rem;
+            padding: 0.2rem 0.8rem;
             border-radius: 30px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: 0.2s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             box-shadow: 0 4px 12px rgba(123, 47, 190, 0.3);
             width: 100%;
-            height: 42px;
-            min-height: 42px;
+            height: 30px;              /* Altura reducida */
+            min-height: 30px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -449,8 +479,9 @@
             transform: none;
             box-shadow: none;
         }
-        .btn-submit i { font-size: 0.8rem; color: #fff; }
+        .btn-submit i { font-size: 0.7rem; color: #fff; }
 
+        /* ===== POPUP (sin cambios) ===== */
         .popup-overlay {
             display: none;
             position: fixed;
@@ -580,60 +611,54 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .card { padding: 1rem; max-height: 94vh; }
-            .two-column-layout { flex-direction: column; gap: 0.8rem; }
+            .card { padding: 0.6rem 0.8rem; max-height: 96vh; }
+            .two-column-layout { flex-direction: column; gap: 0.5rem; }
             .left-col, .right-col { flex: 1 1 100%; min-width: 0; }
-            .right-col .form-grid { padding: 0.8rem; gap: 0.5rem; height: auto; }
-            table { font-size: 0.7rem; min-width: 380px; }
-            th { padding: 0.2rem 0.15rem; font-size: 0.65rem; }
-            th:first-child { min-width: 40px; padding: 0.2rem 0.1rem; }
-            td { padding: 0.12rem 0.08rem; }
-            .slot-cell { height: 24px; }
+            .right-col .form-grid { padding: 0.5rem; gap: 0.3rem; }
+            table { font-size: 0.65rem; min-width: 340px; }
+            th { padding: 0.15rem 0.1rem; font-size: 0.6rem; }
+            th:first-child { min-width: 35px; padding: 0.15rem 0.05rem; }
+            td { padding: 0.15rem 0.05rem; }
+            .slot-cell { height: 26px; }
             .slot-cell input[type="radio"] { width: 14px; height: 14px; }
-            .time-slot { font-size: 0.65rem; }
-            .afternoon-row td { font-size: 0.55rem; padding: 0.08rem 0.02rem; }
-            h1 { font-size: 1.5rem; }
-            .update-indicator { font-size: 0.6rem; padding: 0.1rem 0.5rem; }
-            .week-navigation { flex-direction: column; align-items: stretch; gap: 0.3rem; }
+            .time-slot { font-size: 0.6rem; }
+            .afternoon-row td { font-size: 0.5rem; padding: 0.06rem 0.02rem; }
+            h1 { font-size: 1.3rem; }
+            .update-indicator { font-size: 0.5rem; padding: 0.05rem 0.4rem; }
+            .week-navigation { flex-direction: column; align-items: stretch; gap: 0.2rem; }
             .week-nav-buttons { justify-content: center; }
-            .week-label { font-size: 0.75rem; padding: 0.15rem 0.6rem; }
-            .cookie-notice { flex-direction: column; align-items: stretch; text-align: center; padding: 0.4rem 0.6rem; gap: 0.4rem; }
-            .cookie-notice .cookie-btn { width: 100%; font-size: 0.7rem; padding: 0.2rem 0.6rem; }
-            .selected-display { font-size: 0.8rem; padding: 0.3rem 0.6rem; min-height: 32px; }
+            .week-label { font-size: 0.65rem; padding: 0.1rem 0.6rem; }
+            .cookie-notice { flex-direction: column; align-items: stretch; text-align: center; padding: 0.3rem 0.5rem; gap: 0.3rem; }
+            .cookie-notice .cookie-btn { width: 100%; font-size: 0.6rem; padding: 0.15rem 0.5rem; }
+            .selected-display { font-size: 0.7rem; padding: 0.2rem 0.5rem; min-height: 26px; }
+            .field-group input, .field-group select { height: 26px; font-size: 0.7rem; padding: 0.15rem 0.4rem; }
+            .btn-submit { height: 26px; font-size: 0.7rem; padding: 0.15rem 0.6rem; min-height: 26px; }
             .popup-container { padding: 1.5rem 1.2rem; max-height: 90vh; }
-            .popup-container .popup-details .detail-row { font-size: 0.75rem; flex-direction: column; align-items: flex-start; gap: 0.1rem; }
-            .popup-container .popup-details .detail-row .value { text-align: left; max-width: 100%; }
         }
 
         @media (max-width: 480px) {
-            .card { padding: 0.5rem; max-height: 92vh; }
-            table { font-size: 0.6rem; min-width: 320px; }
-            th { padding: 0.12rem 0.1rem; font-size: 0.55rem; }
-            th:first-child { min-width: 30px; padding: 0.12rem 0.05rem; }
-            td { padding: 0.1rem 0.05rem; }
+            .card { padding: 0.4rem 0.5rem; max-height: 94vh; }
+            table { font-size: 0.55rem; min-width: 280px; }
+            th { padding: 0.1rem 0.08rem; font-size: 0.5rem; }
+            th:first-child { min-width: 28px; padding: 0.1rem 0.03rem; }
+            td { padding: 0.1rem 0.03rem; }
             .slot-cell { height: 22px; }
             .slot-cell input[type="radio"] { width: 12px; height: 12px; }
-            .time-slot { font-size: 0.55rem; padding: 0.05rem 0.02rem; }
-            .afternoon-row td { font-size: 0.5rem; padding: 0.06rem 0.02rem; }
-            .right-col .form-grid { padding: 0.5rem; gap: 0.4rem; border-radius: 12px; }
-            .field-group input, .field-group select { padding: 0.3rem 0.5rem; font-size: 0.8rem; height: 34px; }
-            .btn-submit { height: 34px; font-size: 0.75rem; padding: 0.2rem 0.6rem; min-height: 34px; }
-            h1 { font-size: 1.2rem; }
-            .update-indicator { font-size: 0.5rem; padding: 0.05rem 0.4rem; gap: 3px; }
-            .week-label { font-size: 0.65rem; padding: 0.1rem 0.5rem; }
-            .week-nav-buttons button { font-size: 0.6rem; padding: 0.15rem 0.5rem; gap: 3px; }
-            .cookie-notice p { font-size: 0.7rem; }
-            .cookie-notice .cookie-btn { font-size: 0.6rem; padding: 0.15rem 0.5rem; }
-            .selected-display { font-size: 0.7rem; padding: 0.2rem 0.5rem; min-height: 28px; }
-            .popup-container { padding: 1rem 0.8rem; }
+            .time-slot { font-size: 0.5rem; padding: 0.03rem 0.02rem; }
+            .afternoon-row td { font-size: 0.45rem; padding: 0.04rem 0.02rem; }
+            .right-col .form-grid { padding: 0.3rem; gap: 0.2rem; }
+            .field-group input, .field-group select { height: 22px; font-size: 0.6rem; padding: 0.1rem 0.3rem; }
+            .btn-submit { height: 22px; font-size: 0.6rem; padding: 0.1rem 0.4rem; min-height: 22px; }
+            h1 { font-size: 1.1rem; }
+            .update-indicator { font-size: 0.4rem; padding: 0.03rem 0.3rem; }
+            .week-label { font-size: 0.55rem; padding: 0.05rem 0.4rem; }
+            .week-nav-buttons button { font-size: 0.5rem; padding: 0.1rem 0.4rem; gap: 2px; }
+            .cookie-notice p { font-size: 0.6rem; }
+            .cookie-notice .cookie-btn { font-size: 0.5rem; padding: 0.1rem 0.4rem; }
+            .selected-display { font-size: 0.6rem; padding: 0.15rem 0.3rem; min-height: 22px; }
+            .popup-container { padding: 0.8rem 1rem; }
             .popup-container h2 { font-size: 1.1rem; }
             .popup-container .popup-icon { font-size: 2.8rem; }
-            .popup-container .popup-subtitle { font-size: 0.7rem; }
-            .popup-container .popup-details { padding: 0.6rem 0.8rem; }
-            .popup-container .popup-details .detail-row { font-size: 0.7rem; padding: 0.15rem 0; }
-            .popup-container .popup-notice { font-size: 0.7rem; padding: 0.3rem 0.6rem; }
-            .popup-container .popup-whatsapp { font-size: 0.7rem; padding: 0.3rem 0.6rem; }
-            .popup-container .popup-close-btn { font-size: 0.75rem; padding: 0.3rem 1rem; }
         }
     </style>
 </head>
@@ -644,22 +669,22 @@
             <span>Reserva tu Cita · Clínica Dental</span>
             <span class="update-indicator" id="updateIndicator">
                 <i class="fas fa-clock"></i>
-                <span>Actualizando horarios...</span>
+                <span>Actualizando...</span>
             </span>
         </h1>
 
         <div class="cookie-notice" id="cookieNotice">
-            <p><i class="fas fa-cookie-bite"></i> Este sitio utiliza cookies para recordar tus datos y preferencias.</p>
+            <p><i class="fas fa-cookie-bite"></i> Este sitio usa cookies para recordar tus datos.</p>
             <div>
-                <button class="cookie-btn" id="acceptCookiesBtn"><i class="fas fa-check"></i> Aceptar cookies</button>
-                <button class="cookie-btn" id="clearCookiesBtn"><i class="fas fa-trash"></i> Borrar cookies</button>
+                <button class="cookie-btn" id="acceptCookiesBtn"><i class="fas fa-check"></i> Aceptar</button>
+                <button class="cookie-btn" id="clearCookiesBtn"><i class="fas fa-trash"></i> Borrar</button>
             </div>
         </div>
 
         <div class="week-navigation">
             <div class="week-nav-buttons">
-                <button id="prevWeekBtn"><i class="fas fa-chevron-left"></i> Semana anterior</button>
-                <button id="nextWeekBtn">Semana siguiente <i class="fas fa-chevron-right"></i></button>
+                <button id="prevWeekBtn"><i class="fas fa-chevron-left"></i> Ant.</button>
+                <button id="nextWeekBtn">Sig. <i class="fas fa-chevron-right"></i></button>
             </div>
             <div class="week-label" id="weekLabel">Cargando...</div>
         </div>
@@ -701,14 +726,14 @@
                         <div class="field-group">
                             <label for="telefono"><i class="fas fa-phone-alt"></i> Teléfono</label>
                             <input type="tel" id="telefono" placeholder="+34 600 000 000" autocomplete="tel" required>
-                            <span class="hint">Incluye código de país</span>
+                            <span class="hint">Código de país</span>
                         </div>
                         <div class="field-group" id="serviceFieldGroup" style="display:none;">
                             <label for="servicio"><i class="fas fa-concierge-bell"></i> Servicio</label>
                             <select id="servicio" autocomplete="off">
                                 <option value="">Selecciona un servicio</option>
                             </select>
-                            <span class="hint">Tipo de servicio requerido</span>
+                            <span class="hint">Tipo de servicio</span>
                         </div>
                         <div class="btn-wrapper">
                             <label class="btn-label" aria-hidden="true">Reservar</label>
@@ -733,13 +758,13 @@
                 <div class="popup-details" id="popupDetails"></div>
                 <div class="popup-notice">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <strong>Importante:</strong> En caso de no poder asistir, por favor avisa con <strong>24 horas de anticipación</strong> para poder reasignar el turno.
+                    <strong>Importante:</strong> Avisa con <strong>24h</strong> de anticipación si no puedes asistir.
                 </div>
                 <div class="popup-whatsapp">
                     <i class="fab fa-whatsapp"></i>
                     <div>
                         <strong>Confirmación enviada por WhatsApp</strong><br>
-                        <span>Se ha enviado un mensaje con los datos al número <span class="whatsapp-number">+5493518692251</span></span>
+                        <span>Mensaje enviado al <span class="whatsapp-number">+5493518692251</span></span>
                     </div>
                 </div>
             </div>
@@ -752,7 +777,7 @@
     </div>
 
     <script>
-        // ===== CONFIGURACIÓN FIREBASE (sin cambios) =====
+        // ===== CONFIGURACIÓN FIREBASE =====
         const firebaseConfig = {
             apiKey: "AIzaSyBCXprwlz801V0co99vpWwm17WUbWYGkk8",
             authDomain: "reservascitas1.firebaseapp.com",
@@ -766,7 +791,7 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        // ===== VARIABLES GLOBALES =====
+        // ===== VARIABLES =====
         const TIMEZONE = 'America/Argentina/Buenos_Aires';
         const daysOfWeek = ['Lun','Mar','Mié','Jue','Vie','Sáb'];
         const morningHours = [9,10,11,12];
@@ -986,8 +1011,8 @@
 
                 if (i === 0) {
                     bodyHtml += '<td class="' + cellClass +
-                        '" style="text-align: center; letter-spacing: 2px; font-weight: 600; color: #6b4a8a; font-size: 0.6rem;">' +
-                        '<i class="fas fa-sun" style="margin-right: 4px; color: #7b2fbe;"></i> TARDE</td>';
+                        '" style="text-align: center; letter-spacing: 2px; font-weight: 600; color: #6b4a8a; font-size: 0.55rem;">' +
+                        '<i class="fas fa-sun" style="margin-right: 3px; color: #7b2fbe;"></i> TARDE</td>';
                 } else {
                     bodyHtml += '<td class="' + cellClass + '"></td>';
                 }
