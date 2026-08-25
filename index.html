@@ -283,7 +283,6 @@
             align-items: center;
             justify-content: center;
         }
-        /* ===== RADIO BUTTONS VERDES PARA DISPONIBLES ===== */
         .slot-cell input[type="radio"] {
             appearance: none;
             width: 16px;
@@ -298,7 +297,6 @@
             margin: 0;
             flex-shrink: 0;
         }
-        /* Cuando está disponible (no deshabilitado, no reservado) -> fondo verde claro */
         .slot-cell input[type="radio"]:not(:disabled):not(:checked) {
             border-color: #4caf50;
             background: #4caf50;
@@ -332,7 +330,6 @@
             border-color: #3a3a3a;
             background: #1a1a1a;
         }
-        /* Para los radios deshabilitados que son reservados, se mantiene el estilo de reservado (ya hereda de td.reserved-cell) */
         .afternoon-row td {
             background: #282828;
             font-weight: 500;
@@ -442,7 +439,6 @@
         }
         .btn-submit i { font-size: 0.75rem; color: #1a1a1a; }
 
-        /* ===== POPUP SIN SCROLLBAR ===== */
         .popup-overlay {
             display: none;
             position: fixed;
@@ -470,7 +466,7 @@
             animation: popupFadeIn 0.4s ease;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Evita scroll en el contenedor */
+            overflow: hidden;
         }
         @keyframes popupFadeIn {
             from { opacity: 0; transform: scale(0.9) translateY(20px); }
@@ -489,14 +485,14 @@
         }
         .popup-container .popup-body {
             flex: 1 1 auto;
-            overflow-y: auto; /* Permite scroll si el contenido es muy largo, pero la barra se oculta con CSS */
+            overflow-y: auto;
             padding-right: 0.3rem;
             margin-right: -0.3rem;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
         .popup-container .popup-body::-webkit-scrollbar {
-            display: none; /* Chrome/Safari/Opera */
+            display: none;
         }
         .popup-container .popup-details {
             background: #222222;
@@ -711,22 +707,22 @@
                     <div class="form-grid">
                         <div class="field-group">
                             <label for="nombre"><i class="far fa-user"></i> Nombre</label>
-                            <input type="text" id="nombre" placeholder="Ej: Ana Pérez" autocomplete="off" required>
+                            <input type="text" id="nombre" placeholder="Ej: Ana Pérez" autocomplete="name" required>
                             <span class="hint">Nombre completo</span>
                         </div>
                         <div class="field-group">
                             <label for="email"><i class="far fa-envelope"></i> Email</label>
-                            <input type="email" id="email" placeholder="ejemplo@email.com" autocomplete="off" required>
+                            <input type="email" id="email" placeholder="ejemplo@email.com" autocomplete="email" required>
                             <span class="hint">Correo electrónico</span>
                         </div>
                         <div class="field-group">
                             <label for="telefono"><i class="fas fa-phone-alt"></i> Teléfono</label>
-                            <input type="tel" id="telefono" placeholder="+34 600 000 000" autocomplete="off" required>
+                            <input type="tel" id="telefono" placeholder="+34 600 000 000" autocomplete="tel" required>
                             <span class="hint">Incluye código de país</span>
                         </div>
                         <div class="field-group" id="serviceFieldGroup" style="display:none;">
                             <label for="servicio"><i class="fas fa-concierge-bell"></i> Servicio</label>
-                            <select id="servicio">
+                            <select id="servicio" autocomplete="off">
                                 <option value="">Selecciona un servicio</option>
                             </select>
                             <span class="hint">Tipo de servicio requerido</span>
@@ -1240,13 +1236,11 @@
             emailInput.value = '';
             telefonoInput.value = '';
             if (servicioSelect) servicioSelect.value = '';
-            // Desmarcar radio seleccionado
             var selected = document.querySelector('input[name="slot"]:checked');
             if (selected) {
                 selected.checked = false;
                 updateFeedback();
             }
-            // Eliminar cookies del formulario
             deleteCookie('reserva_nombre');
             deleteCookie('reserva_email');
             deleteCookie('reserva_telefono');
@@ -1350,9 +1344,7 @@
                 var result = await saveReservationToFirestore(data);
 
                 if (result.success) {
-                    // Limpiar formulario y cookies
                     clearForm();
-                    // Mostrar popup (ya se limpió, pero pasamos los datos)
                     sendWhatsAppMessage(nombre, email, telefono, selected ? selected.value : fecha + ' ' + hora, servicio);
                     showConfirmationPopup(nombre, email, telefono, selected ? selected.value : fecha + ' ' + hora, servicio);
                 } else {
