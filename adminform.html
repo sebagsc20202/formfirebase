@@ -9,6 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
     <style>
+        /* ===== TODOS LOS ESTILOS (incluidos los que ya tenías) ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
         body { background: #1a1a1a; min-height: 100vh; padding: 0.8rem 0.5rem; color: #e8e8e8; }
         .container { max-width: 1200px; margin: 0 auto; }
@@ -435,6 +436,18 @@
         </div>
     </div>
 
+    <!-- MODAL DE CONFIRMACIÓN PERSONALIZADO -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-container" style="max-width: 400px;">
+            <h2 id="confirmTitle" style="color: #e8e8e8; margin-bottom: 0.5rem;">Confirmar acción</h2>
+            <p id="confirmMessage" style="color: #ccc; margin-bottom: 1.5rem; font-size: 0.95rem;"></p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="confirmCancelBtn">Cancelar</button>
+                <button class="btn" id="confirmOkBtn" style="background: #e74c3c;">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         (function() {
             // ===== FIREBASE CONFIG =====
@@ -626,8 +639,8 @@
                         <button class="action-btn btn-whatsapp" onclick="sendWhatsApp('${item.r.id}')" title="Enviar WhatsApp"><i class="fab fa-whatsapp"></i></button>
                         ${item.r.estado==='CANCELADA' ? `<button class="action-btn btn-reactivate" onclick="reactivate('${item.r.id}')" title="Reactivar"><i class="fas fa-undo"></i></button>` : ''}
                         <button class="action-btn btn-reschedule" onclick="openRescheduleModal('${item.r.id}')" title="Reagendar"><i class="fas fa-calendar-alt"></i></button>
-                        <button class="action-btn btn-danger" onclick="cancelReservation('${item.r.id}')" title="Cancelar"><i class="fas fa-times"></i></button>
-                        <button class="action-btn btn-delete" onclick="deleteReservation('${item.r.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+                        <button class="action-btn btn-danger" onclick="confirmAndCancel('${item.r.id}')" title="Cancelar"><i class="fas fa-times"></i></button>
+                        <button class="action-btn btn-delete" onclick="confirmAndDelete('${item.r.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                     `;
                     return `<div class="today-item ${isNext?'next':''} ${isPast?'past':''}">
                         <div class="today-time">${timeStr}</div>
@@ -704,8 +717,8 @@
                             <button class="action-btn btn-whatsapp" onclick="sendWhatsApp('${r.id}')" title="Enviar WhatsApp"><i class="fab fa-whatsapp"></i></button>
                             ${r.estado === 'CANCELADA' ? `<button class="action-btn btn-reactivate" onclick="reactivate('${r.id}')" title="Reactivar"><i class="fas fa-undo"></i></button>` : ''}
                             <button class="action-btn btn-reschedule" onclick="openRescheduleModal('${r.id}')" title="Reagendar"><i class="fas fa-calendar-alt"></i></button>
-                            <button class="action-btn btn-danger" onclick="cancelReservation('${r.id}')" title="Cancelar"><i class="fas fa-times"></i></button>
-                            <button class="action-btn btn-delete" onclick="deleteReservation('${r.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+                            <button class="action-btn btn-danger" onclick="confirmAndCancel('${r.id}')" title="Cancelar"><i class="fas fa-times"></i></button>
+                            <button class="action-btn btn-delete" onclick="confirmAndDelete('${r.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                         </div>
                     `;
                     return `<tr>
@@ -739,18 +752,88 @@
                 if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') window.location.href = url;
             };
 
-            // ===== ACCIONES =====
-            window.cancelReservation = async function(id) {
-                if (!confirm('¿Cancelar esta reserva?')) return;
-                try { await db.collection('citas').doc(id).update({ estado: 'CANCELADA' }); } catch(err) { console.error(err); alert('Error al cancelar. Verifica permisos.'); }
+            // ===== ACCIONES CON MODAL DE CONFIRMACIÓN =====
+            let confirmCallback = null;
+
+            function showConfirmModal(message, title, onConfirm, onCancel) {
+                document.getElementById('confirmMessage').textContent = message;
+                document.getElementById('confirmTitle').textContent = title || 'Confirmar acción';
+                document.getElementById('confirmModal').classList.add('show');
+                confirmCallback = { onConfirm: onConfirm || null, onCancel: onCancel || null };
+            }
+
+            // Eventos del modal de confirmación
+            document.getElementById('confirmOkBtn').addEventListener('click', function() {
+                document.getElementById('confirmModal').classList.remove('show');
+                if (confirmCallback && typeof confirmCallback.onConfirm === 'function') {
+                    confirmCallback.onConfirm();
+                }
+                confirmCallback = null;
+            });
+
+            document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+                document.getElementById('confirmModal').classList.remove('show');
+                if (confirmCallback && typeof confirmCallback.onCancel === 'function') {
+                    confirmCallback.onCancel();
+                }
+                confirmCallback = null;
+            });
+
+            document.getElementById('confirmModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    document.getElementById('confirmModal').classList.remove('show');
+                    if (confirmCallback && typeof confirmCallback.onCancel === 'function') {
+                        confirmCallback.onCancel();
+                    }
+                    confirmCallback = null;
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && document.getElementById('confirmModal').classList.contains('show')) {
+                    document.getElementById('confirmModal').classList.remove('show');
+                    if (confirmCallback && typeof confirmCallback.onCancel === 'function') {
+                        confirmCallback.onCancel();
+                    }
+                    confirmCallback = null;
+                }
+            });
+
+            window.confirmAndCancel = function(id) {
+                showConfirmModal('¿Cancelar esta reserva?', 'Cancelar reserva', async function() {
+                    try {
+                        await db.collection('citas').doc(id).update({ estado: 'CANCELADA' });
+                    } catch(err) {
+                        console.error(err);
+                        alert('Error al cancelar. Verifica permisos.');
+                    }
+                });
             };
+
+            window.confirmAndDelete = function(id) {
+                showConfirmModal(
+                    '⚠️ ¿Estás seguro de que quieres ELIMINAR esta reserva permanentemente?\nEsta acción no se puede deshacer.',
+                    'Eliminar reserva',
+                    async function() {
+                        try {
+                            await db.collection('citas').doc(id).delete();
+                        } catch(err) {
+                            console.error(err);
+                            alert('Error al eliminar. Verifica permisos.');
+                        }
+                    }
+                );
+            };
+
             window.reactivate = async function(id) {
-                if (!confirm('¿Reactivar esta reserva?')) return;
-                try { await db.collection('citas').doc(id).update({ estado: 'ACTIVA' }); } catch(err) { console.error(err); alert('Error al reactivar. Verifica permisos.'); }
-            };
-            window.deleteReservation = async function(id) {
-                if (!confirm('⚠️ ¿Estás seguro de que quieres ELIMINAR esta reserva permanentemente?\nEsta acción no se puede deshacer.')) return;
-                try { await db.collection('citas').doc(id).delete(); } catch(err) { console.error(err); alert('Error al eliminar. Verifica permisos.'); }
+                showConfirmModal('¿Reactivar esta reserva?', 'Reactivar reserva', async function() {
+                    try {
+                        await db.collection('citas').doc(id).update({ estado: 'ACTIVA' });
+                    } catch(err) {
+                        console.error(err);
+                        alert('Error al reactivar. Verifica permisos.');
+                    }
+                });
             };
 
             // ===== REAGENDAR =====
@@ -850,9 +933,6 @@
             document.getElementById('rescheduleModal').addEventListener('click', function(e) {
                 if (e.target === this) closeRescheduleModal();
             });
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') closeRescheduleModal();
-            });
 
             // ===== CAMBIAR CONTRASEÑA =====
             window.openChangePasswordModal = function() {
@@ -887,7 +967,6 @@
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
 
                 try {
-                    // Reautenticar al usuario con la contraseña actual
                     const user = auth.currentUser;
                     if (!user) {
                         alert('No hay usuario autenticado. Inicia sesión nuevamente.');
@@ -896,7 +975,6 @@
                     const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
                     await user.reauthenticateWithCredential(credential);
 
-                    // Actualizar contraseña
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Actualizando...';
                     await user.updatePassword(newPassword);
 
@@ -924,13 +1002,6 @@
 
             document.getElementById('changePasswordModal').addEventListener('click', function(e) {
                 if (e.target === this) closeChangePasswordModal();
-            });
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeChangePasswordModal();
-                    closeRescheduleModal();
-                    closeServiceModal();
-                }
             });
 
             // ===== CONFIGURACIÓN DE SERVICIOS =====
@@ -1194,6 +1265,16 @@
                     currentUser = null;
                 }).catch(console.error);
             };
+
+            // ===== CERRAR MODALES CON ESC (global) =====
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeRescheduleModal();
+                    closeChangePasswordModal();
+                    closeServiceModal();
+                    // Confirm modal se maneja por separado
+                }
+            });
 
             // ===== INICIO =====
             loadServiceConfig();
