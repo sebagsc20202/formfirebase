@@ -835,7 +835,9 @@
                 });
             };
 
-            // ===== REAGENDAR (con rango de 40 días desde la fecha original) =====
+            // ============================================================
+            //  REAGENDAR (muestra TODOS los horarios libres SIN EXCEPCIÓN)
+            // ============================================================
             window.openRescheduleModal = function(id) {
                 const reserva = allReservations.find(r => r.id === id);
                 if (!reserva) return alert('Reserva no encontrada');
@@ -866,11 +868,11 @@
                         return;
                     }
 
-                    // Inicio: la fecha de la reserva original o hoy (la que sea más tarde)
-                    let startDate = new Date(Math.max(fechaReserva.getTime(), now.getTime()));
+                    // Inicio: la fecha de la reserva original (sin importar si ya pasó)
+                    let startDate = new Date(fechaReserva);
                     startDate.setHours(0,0,0,0);
                     const endDate = new Date(startDate);
-                    endDate.setDate(endDate.getDate() + 40); // 40 días después del inicio
+                    endDate.setDate(endDate.getDate() + 40);
 
                     // Obtener reservas ocupadas (excepto la actual)
                     const snapshot = await db.collection('citas').get();
@@ -886,28 +888,18 @@
                     const options = [];
                     const current = new Date(startDate);
                     while (current <= endDate) {
-                        const dow = current.getDay();
-                        if (dow >= 1 && dow <= 6) { // Lun a Sáb
-                            const dayNum = String(current.getDate()).padStart(2,'0');
-                            const dayName = LONG_DAYS[dow].substring(0,3);
-                            const dayLabel = dayName + ' ' + dayNum;
-                            // Filtrar horas que ya pasaron si es hoy
-                            const hourSlots = allHours.filter(h => {
-                                if (current.toDateString() === now.toDateString()) {
-                                    const nowH = now.getHours();
-                                    if (h < nowH) return false;
-                                    if (h === nowH && now.getMinutes() >= 30) return false;
-                                }
-                                return true;
-                            });
-                            hourSlots.forEach(h => {
-                                const horaStr = String(h).padStart(2,'0') + ':00';
-                                const key = dayLabel + ' ' + horaStr;
-                                if (!ocupados.has(key)) {
-                                    options.push({ label: key, value: key });
-                                }
-                            });
-                        }
+                        const dayNum = String(current.getDate()).padStart(2,'0');
+                        const dayName = LONG_DAYS[current.getDay()].substring(0,3);
+                        const dayLabel = dayName + ' ' + dayNum;
+                        // TODAS las horas (sin filtrar por hora actual)
+                        allHours.forEach(h => {
+                            const horaStr = String(h).padStart(2,'0') + ':00';
+                            const key = dayLabel + ' ' + horaStr;
+                            // Solo agregar si NO está ocupado
+                            if (!ocupados.has(key)) {
+                                options.push({ label: key, value: key });
+                            }
+                        });
                         current.setDate(current.getDate() + 1);
                     }
 
