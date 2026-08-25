@@ -48,7 +48,7 @@
         /* MODALES */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; padding: 1rem; }
         .modal-overlay.show { display: flex; }
-        .modal-container { background: #2a2a2a; border-radius: 8px; border: 1px solid #444; padding: 1.5rem; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; }
+        .modal-container { background: #2a2a2a; border-radius: 8px; border: 1px solid #444; padding: 1.5rem; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; }
         .modal-container h2 { color: #e8e8e8; margin-bottom: 0.5rem; }
         .modal-container .subtitle { color: #999; font-size: 0.85rem; margin-bottom: 1rem; }
         .modal-container .form-group { margin-bottom: 0.6rem; }
@@ -167,6 +167,153 @@
         .btn-change-password { background: #f39c12; color: #1a1a1a; border: none; border-radius: 4px; padding: 0.25rem 0.8rem; cursor: pointer; font-size: 0.7rem; transition: 0.15s; }
         .btn-change-password:hover { background: #e67e22; box-shadow: 0 0 8px rgba(243, 156, 18, 0.5); }
 
+        /* ESTILOS CALENDARIO EN MODAL */
+        .calendar-container {
+            background: #1f1f1f;
+            border-radius: 4px;
+            border: 1px solid #353535;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            overflow-x: auto;
+        }
+        .calendar-container table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+            min-width: 400px;
+            background: transparent;
+        }
+        .calendar-container th {
+            background: #2a2a2a;
+            color: #d0d0d0;
+            font-weight: 600;
+            padding: 0.2rem 0.1rem;
+            text-align: center;
+            border-bottom: 2px solid #3a3a3a;
+            font-size: 0.65rem;
+        }
+        .calendar-container td {
+            padding: 0.1rem 0.05rem;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            vertical-align: middle;
+        }
+        .calendar-container .time-slot {
+            font-weight: 500;
+            color: #c0c0c0;
+            background: #262626;
+            font-size: 0.65rem;
+            padding: 0.05rem 0.02rem;
+        }
+        .calendar-container .slot-cell {
+            position: relative;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .calendar-container .slot-cell input[type="radio"] {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #555;
+            border-radius: 50%;
+            outline: none;
+            cursor: pointer;
+            transition: 0.15s;
+            background: #2a2a2a;
+            position: relative;
+            margin: 0;
+            flex-shrink: 0;
+        }
+        .calendar-container .slot-cell input[type="radio"]:not(:disabled):not(:checked) {
+            border-color: #4caf50;
+            background: #4caf50;
+            box-shadow: 0 0 6px rgba(76,175,80,0.3);
+        }
+        .calendar-container .slot-cell input[type="radio"]:not(:disabled):not(:checked):hover {
+            border-color: #66bb6a;
+            background: #66bb6a;
+            box-shadow: 0 0 10px rgba(76,175,80,0.5);
+        }
+        .calendar-container .slot-cell input[type="radio"]:not(:disabled) { border-color: #666; background: #333; }
+        .calendar-container .slot-cell input[type="radio"]:not(:disabled):hover { border-color: #999; background: #3d3d3d; }
+        .calendar-container .slot-cell input[type="radio"]:checked {
+            border-color: #aaa;
+            background-color: #aaa;
+            box-shadow: 0 0 0 3px rgba(170,170,170,0.2);
+        }
+        .calendar-container .slot-cell input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 6px;
+            height: 6px;
+            background: #1a1a1a;
+            border-radius: 50%;
+        }
+        .calendar-container .slot-cell input[type="radio"]:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: #3a3a3a;
+            background: #1a1a1a;
+        }
+        .calendar-container .reserved-cell .slot-cell input[type="radio"] {
+            opacity: 0.2 !important;
+            cursor: not-allowed !important;
+            border-color: #3a3a3a !important;
+            background: #1a1a1a !important;
+            pointer-events: none !important;
+        }
+        .calendar-container .reserved-cell {
+            background: #3a2a2a !important;
+            opacity: 0.9 !important;
+            position: relative;
+        }
+        .calendar-container .reserved-cell::after {
+            content: '✕';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff4444;
+            font-size: 0.7rem;
+            font-weight: bold;
+            opacity: 0.9;
+        }
+        .calendar-container .week-nav {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .calendar-container .week-nav button {
+            background: #333;
+            border: 1px solid #444;
+            color: #ccc;
+            padding: 0.15rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: 0.15s;
+        }
+        .calendar-container .week-nav button:hover {
+            background: #3d3d3d;
+            border-color: #555;
+        }
+        .calendar-container .week-nav button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .calendar-container .week-label {
+            color: #d4af37;
+            font-weight: 600;
+            text-align: center;
+            font-size: 0.8rem;
+            padding: 0.1rem 0;
+        }
+
         @media (max-width: 768px) {
             th, td { padding: 0.2rem 0.2rem; font-size: 0.65rem; }
             .hide-mobile { display: none; }
@@ -182,6 +329,8 @@
             .dashboard-content { flex-direction: column; }
             .dashboard-content > * { flex: 1 1 100%; }
             .modal-container { padding: 1rem; max-width: 95%; }
+            .calendar-container table { font-size: 0.6rem; min-width: 320px; }
+            .calendar-container .slot-cell { height: 20px; }
         }
     </style>
 </head>
@@ -350,7 +499,7 @@
         </div>
     </div>
 
-    <!-- MODAL REAGENDAR -->
+    <!-- MODAL REAGENDAR (con calendario) -->
     <div class="modal-overlay" id="rescheduleModal">
         <div class="modal-container">
             <h2><i class="fas fa-calendar-alt" style="color: #d4af37;"></i> Reagendar Reserva</h2>
@@ -371,9 +520,7 @@
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-calendar-day"></i> Nuevo Horario</label>
-                    <select id="rescheduleSlot" required>
-                        <option value="">Cargando horarios...</option>
-                    </select>
+                    <div id="calendarContainer"></div>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeRescheduleModal()">Cancelar</button>
@@ -481,6 +628,16 @@
             let unsubscribe = null;
             let serviciosActuales = [];
             let nombreCampoActual = 'Servicio';
+
+            // Variables para el calendario de reagendar
+            let calendarData = {
+                startDate: null,
+                endDate: null,
+                currentWeekStart: null,
+                ocupados: new Set(),
+                excludeId: null,
+                reservaOriginal: null
+            };
 
             // ===== LOGIN =====
             document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -761,7 +918,6 @@
                 confirmCallback = { onConfirm: onConfirm || null, onCancel: onCancel || null };
             }
 
-            // Eventos del modal de confirmación
             document.getElementById('confirmOkBtn').addEventListener('click', function() {
                 document.getElementById('confirmModal').classList.remove('show');
                 if (confirmCallback && typeof confirmCallback.onConfirm === 'function') {
@@ -836,7 +992,7 @@
             };
 
             // ============================================================
-            //  REAGENDAR (muestra TODOS los horarios libres SIN EXCEPCIÓN)
+            //  REAGENDAR CON CALENDARIO
             // ============================================================
             window.openRescheduleModal = function(id) {
                 const reserva = allReservations.find(r => r.id === id);
@@ -845,86 +1001,185 @@
                 document.getElementById('rescheduleNombre').value = reserva.nombre;
                 document.getElementById('rescheduleEmail').value = reserva.email;
                 document.getElementById('rescheduleTelefono').value = reserva.telefono;
-                populateAvailableSlots(id);
-                document.getElementById('rescheduleModal').classList.add('show');
+                calendarData.excludeId = id;
+                calendarData.reservaOriginal = reserva;
+                calendarData.ocupados = new Set();
+                // Construir lista de ocupados (excepto esta reserva)
+                db.collection('citas').get().then(snapshot => {
+                    snapshot.forEach(doc => {
+                        if (doc.id === id) return;
+                        const data = doc.data();
+                        if (data.estado === 'ACTIVA') {
+                            calendarData.ocupados.add(data.fecha + ' ' + data.hora);
+                        }
+                    });
+                    // Calcular rango
+                    const fechaReserva = parseReservaDate(reserva.fecha, reserva.hora);
+                    if (!fechaReserva) {
+                        alert('Error: fecha inválida');
+                        return;
+                    }
+                    calendarData.startDate = new Date(fechaReserva);
+                    calendarData.startDate.setHours(0,0,0,0);
+                    calendarData.endDate = new Date(calendarData.startDate);
+                    calendarData.endDate.setDate(calendarData.endDate.getDate() + 40);
+                    // Inicializar semana actual a partir de la fecha de la reserva
+                    calendarData.currentWeekStart = getMonday(calendarData.startDate);
+                    renderCalendar();
+                    document.getElementById('rescheduleModal').classList.add('show');
+                }).catch(error => {
+                    console.error(error);
+                    alert('Error cargando horarios');
+                });
             };
+
             window.closeRescheduleModal = function() {
                 document.getElementById('rescheduleModal').classList.remove('show');
             };
 
-            async function populateAvailableSlots(excludeId) {
-                const select = document.getElementById('rescheduleSlot');
-                select.innerHTML = '<option value="">Cargando horarios...</option>';
-                try {
-                    const reserva = allReservations.find(r => r.id === excludeId);
-                    if (!reserva) {
-                        select.innerHTML = '<option value="">Error: reserva no encontrada</option>';
-                        return;
-                    }
-                    const now = new Date();
-                    const fechaReserva = parseReservaDate(reserva.fecha, reserva.hora);
-                    if (!fechaReserva) {
-                        select.innerHTML = '<option value="">Error: fecha inválida</option>';
-                        return;
-                    }
+            function getMonday(date) {
+                const d = new Date(date);
+                const day = d.getDay();
+                const diff = (day === 0) ? 6 : day - 1;
+                d.setDate(d.getDate() - diff);
+                d.setHours(0,0,0,0);
+                return d;
+            }
 
-                    // Inicio: la fecha de la reserva original (sin importar si ya pasó)
-                    let startDate = new Date(fechaReserva);
-                    startDate.setHours(0,0,0,0);
-                    const endDate = new Date(startDate);
-                    endDate.setDate(endDate.getDate() + 40);
+            function renderCalendar() {
+                const container = document.getElementById('calendarContainer');
+                if (!calendarData.startDate || !calendarData.endDate) {
+                    container.innerHTML = '<p style="color:#666;">Cargando calendario...</p>';
+                    return;
+                }
+                const weekStart = new Date(calendarData.currentWeekStart);
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 6);
+                weekEnd.setHours(23,59,59,999);
 
-                    // Obtener reservas ocupadas (excepto la actual)
-                    const snapshot = await db.collection('citas').get();
-                    const ocupados = new Set();
-                    snapshot.forEach(doc => {
-                        if (doc.id === excludeId) return;
-                        const data = doc.data();
-                        if (data.estado === 'ACTIVA') {
-                            ocupados.add(data.fecha + ' ' + data.hora);
+                // Verificar si la semana está dentro del rango
+                const canPrev = weekStart > calendarData.startDate;
+                const canNext = weekEnd < calendarData.endDate;
+
+                let html = '';
+                html += `<div class="week-nav">
+                    <button id="calendarPrev" ${canPrev ? '' : 'disabled'}><i class="fas fa-chevron-left"></i> Ant.</button>
+                    <span class="week-label">${formatWeekLabel(weekStart)}</span>
+                    <button id="calendarNext" ${canNext ? '' : 'disabled'}>Sig. <i class="fas fa-chevron-right"></i></button>
+                </div>`;
+
+                // Construir tabla
+                const days = [];
+                for (let d = new Date(weekStart); d <= weekEnd; d.setDate(d.getDate() + 1)) {
+                    if (d < calendarData.startDate || d > calendarData.endDate) continue;
+                    const dayNum = String(d.getDate()).padStart(2,'0');
+                    const dayName = LONG_DAYS[d.getDay()].substring(0,3);
+                    days.push({
+                        date: new Date(d),
+                        label: dayName + ' ' + dayNum
+                    });
+                }
+
+                html += `<div class="table-responsive"><table>`;
+                // Cabecera
+                html += `<thead><tr><th>Hora</th>`;
+                days.forEach(day => {
+                    html += `<th>${day.label}</th>`;
+                });
+                html += `</tr></thead><tbody>`;
+
+                // Horas mañana
+                morningHours.forEach(hour => {
+                    html += `<tr><td class="time-slot"><i class="far fa-clock"></i> ${hour}:00</td>`;
+                    days.forEach(day => {
+                        const key = day.label + ' ' + String(hour).padStart(2,'0') + ':00';
+                        const isOccupied = calendarData.ocupados.has(key);
+                        const isPast = day.date < new Date() && hour < new Date().getHours();
+                        const disabled = isOccupied || isPast;
+                        const cellClass = isOccupied ? 'reserved-cell' : '';
+                        html += `<td class="${cellClass}"><div class="slot-cell">`;
+                        if (!disabled) {
+                            html += `<input type="radio" name="newSlot" value="${key}">`;
+                        } else {
+                            html += `<input type="radio" name="newSlot" value="${key}" disabled>`;
                         }
+                        html += `</div></td>`;
                     });
+                    html += `</tr>`;
+                });
 
-                    const options = [];
-                    const current = new Date(startDate);
-                    while (current <= endDate) {
-                        const dayNum = String(current.getDate()).padStart(2,'0');
-                        const dayName = LONG_DAYS[current.getDay()].substring(0,3);
-                        const dayLabel = dayName + ' ' + dayNum;
-                        // TODAS las horas (sin filtrar por hora actual)
-                        allHours.forEach(h => {
-                            const horaStr = String(h).padStart(2,'0') + ':00';
-                            const key = dayLabel + ' ' + horaStr;
-                            // Solo agregar si NO está ocupado
-                            if (!ocupados.has(key)) {
-                                options.push({ label: key, value: key });
-                            }
-                        });
-                        current.setDate(current.getDate() + 1);
-                    }
+                // Fila TARDE
+                html += `<tr class="afternoon-row"><td style="text-align:center;font-weight:600;color:#b0b0b0;font-size:0.65rem;"><i class="fas fa-sun" style="margin-right:3px;color:#777;"></i> TARDE</td>`;
+                days.forEach(() => {
+                    html += `<td></td>`;
+                });
+                html += `</tr>`;
 
-                    select.innerHTML = '';
-                    if (options.length === 0) {
-                        select.innerHTML = '<option value="">No hay horarios disponibles en los próximos 40 días</option>';
-                        return;
-                    }
-                    options.forEach(opt => {
-                        const option = document.createElement('option');
-                        option.value = opt.value;
-                        option.textContent = opt.label;
-                        select.appendChild(option);
+                // Horas tarde
+                afternoonHours.forEach(hour => {
+                    html += `<tr><td class="time-slot"><i class="far fa-clock"></i> ${hour}:00</td>`;
+                    days.forEach(day => {
+                        const key = day.label + ' ' + String(hour).padStart(2,'0') + ':00';
+                        const isOccupied = calendarData.ocupados.has(key);
+                        const isPast = day.date < new Date() && hour < new Date().getHours();
+                        const disabled = isOccupied || isPast;
+                        const cellClass = isOccupied ? 'reserved-cell' : '';
+                        html += `<td class="${cellClass}"><div class="slot-cell">`;
+                        if (!disabled) {
+                            html += `<input type="radio" name="newSlot" value="${key}">`;
+                        } else {
+                            html += `<input type="radio" name="newSlot" value="${key}" disabled>`;
+                        }
+                        html += `</div></td>`;
                     });
-                } catch (error) {
-                    console.error(error);
-                    select.innerHTML = '<option value="">Error cargando horarios</option>';
+                    html += `</tr>`;
+                });
+
+                html += `</tbody></table></div>`;
+                container.innerHTML = html;
+
+                // Eventos de navegación
+                document.getElementById('calendarPrev')?.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (canPrev) {
+                        calendarData.currentWeekStart.setDate(calendarData.currentWeekStart.getDate() - 7);
+                        renderCalendar();
+                    }
+                });
+                document.getElementById('calendarNext')?.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (canNext) {
+                        calendarData.currentWeekStart.setDate(calendarData.currentWeekStart.getDate() + 7);
+                        renderCalendar();
+                    }
+                });
+            }
+
+            function formatWeekLabel(weekStart) {
+                const start = new Date(weekStart);
+                const end = new Date(start);
+                end.setDate(end.getDate() + 6);
+                const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+                const startMonth = monthNames[start.getMonth()];
+                const endMonth = monthNames[end.getMonth()];
+                const startDay = start.getDate();
+                const endDay = end.getDate();
+                if (startMonth === endMonth) {
+                    return `${startDay} - ${endDay} de ${startMonth} ${start.getFullYear()}`;
+                } else {
+                    return `${startDay} de ${startMonth} - ${endDay} de ${endMonth} ${start.getFullYear()}`;
                 }
             }
 
             document.getElementById('rescheduleForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const id = document.getElementById('rescheduleId').value;
-                const newSlot = document.getElementById('rescheduleSlot').value;
-                if (!newSlot) { alert('Por favor selecciona un horario válido.'); return; }
+                const selected = document.querySelector('input[name="newSlot"]:checked');
+                if (!selected) {
+                    alert('Por favor selecciona un horario del calendario.');
+                    return;
+                }
+                const newSlot = selected.value;
                 const partes = newSlot.split(' ');
                 if (partes.length < 3) return alert('Horario inválido');
                 const fecha = partes[0] + ' ' + partes[1];
