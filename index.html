@@ -283,10 +283,11 @@
             align-items: center;
             justify-content: center;
         }
+        /* ===== RADIO BUTTONS VERDES PARA DISPONIBLES ===== */
         .slot-cell input[type="radio"] {
             appearance: none;
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             border: 2px solid #555555;
             border-radius: 50%;
             outline: none;
@@ -296,6 +297,17 @@
             position: relative;
             margin: 0;
             flex-shrink: 0;
+        }
+        /* Cuando está disponible (no deshabilitado, no reservado) -> fondo verde claro */
+        .slot-cell input[type="radio"]:not(:disabled):not(:checked) {
+            border-color: #4caf50;
+            background: #4caf50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+        }
+        .slot-cell input[type="radio"]:not(:disabled):not(:checked):hover {
+            border-color: #66bb6a;
+            background: #66bb6a;
+            box-shadow: 0 0 12px rgba(76, 175, 80, 0.5);
         }
         .slot-cell input[type="radio"]:not(:disabled) { border-color: #666666; background: #333333; }
         .slot-cell input[type="radio"]:not(:disabled):hover { border-color: #999999; background: #3d3d3d; }
@@ -307,13 +319,12 @@
         .slot-cell input[type="radio"]:checked::after {
             content: '';
             position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 4px;
-            height: 7px;
-            border: solid #1a1a1a;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
+            top: 3px;
+            left: 3px;
+            width: 6px;
+            height: 6px;
+            background: #1a1a1a;
+            border-radius: 50%;
         }
         .slot-cell input[type="radio"]:disabled {
             opacity: 0.3;
@@ -321,6 +332,7 @@
             border-color: #3a3a3a;
             background: #1a1a1a;
         }
+        /* Para los radios deshabilitados que son reservados, se mantiene el estilo de reservado (ya hereda de td.reserved-cell) */
         .afternoon-row td {
             background: #282828;
             font-weight: 500;
@@ -430,7 +442,7 @@
         }
         .btn-submit i { font-size: 0.75rem; color: #1a1a1a; }
 
-        /* ===== POPUP SIN SCROLL ===== */
+        /* ===== POPUP SIN SCROLLBAR ===== */
         .popup-overlay {
             display: none;
             position: fixed;
@@ -442,14 +454,15 @@
             z-index: 9999;
             justify-content: center;
             align-items: center;
-            padding: 1rem;
+            backdrop-filter: blur(8px);
+            padding: 1.5rem;
         }
         .popup-overlay.show { display: flex; }
         .popup-container {
             background: #2a2a2a;
             border-radius: 8px;
             border: 1px solid #444444;
-            padding: 1.5rem 2rem;
+            padding: 2rem 2.5rem;
             max-width: 480px;
             width: 100%;
             max-height: 90vh;
@@ -457,44 +470,39 @@
             animation: popupFadeIn 0.4s ease;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: hidden; /* Evita scroll en el contenedor */
         }
         @keyframes popupFadeIn {
             from { opacity: 0; transform: scale(0.9) translateY(20px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
         .popup-container .popup-header { flex-shrink: 0; }
-        .popup-container .popup-icon {
-            text-align: center;
-            font-size: 2.8rem;
-            color: #4caf50;
-            margin-bottom: 0.2rem;
-        }
-        .popup-container h2 {
-            color: #e8e8e8;
-            text-align: center;
-            font-size: 1.3rem;
-            margin-bottom: 0.2rem;
-        }
+        .popup-container .popup-icon { text-align: center; font-size: 3rem; color: #4caf50; margin-bottom: 0.3rem; }
+        .popup-container h2 { color: #e8e8e8; text-align: center; font-size: 1.3rem; margin-bottom: 0.3rem; }
         .popup-container .popup-subtitle {
             color: #9a9a9a;
             text-align: center;
             font-size: 0.8rem;
-            margin-bottom: 0.8rem;
+            margin-bottom: 1rem;
             border-bottom: 1px solid #3a3a3a;
             padding-bottom: 0.6rem;
         }
         .popup-container .popup-body {
-            flex: 0 1 auto;
-            overflow: visible;
-            padding: 0;
-            margin: 0;
+            flex: 1 1 auto;
+            overflow-y: auto; /* Permite scroll si el contenido es muy largo, pero la barra se oculta con CSS */
+            padding-right: 0.3rem;
+            margin-right: -0.3rem;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+        .popup-container .popup-body::-webkit-scrollbar {
+            display: none; /* Chrome/Safari/Opera */
         }
         .popup-container .popup-details {
             background: #222222;
             border-radius: 4px;
-            padding: 0.6rem 1rem;
-            margin-bottom: 0.6rem;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.8rem;
             border: 1px solid #353535;
         }
         .popup-container .popup-details .detail-row {
@@ -519,7 +527,7 @@
             border-left: 3px solid #f44336;
             padding: 0.4rem 0.6rem;
             border-radius: 2px;
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.8rem;
             font-size: 0.75rem;
             color: #d0a0a0;
         }
@@ -530,7 +538,7 @@
             border: 1px solid #2a4a2a;
             border-radius: 4px;
             padding: 0.4rem 0.6rem;
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.8rem;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -559,11 +567,10 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            margin-top: 0.2rem;
+            margin-top: 0.3rem;
         }
         .popup-container .popup-close-btn:hover { background: #555555; border-color: #666666; }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .card { padding: 1.5rem; }
             .two-column-layout { gap: 1rem; }
@@ -589,7 +596,7 @@
             th:first-child { min-width: 40px; padding: 0.2rem 0.1rem; }
             td { padding: 0.2rem 0.08rem; }
             .slot-cell { height: 26px; }
-            .slot-cell input[type="radio"] { width: 12px; height: 12px; }
+            .slot-cell input[type="radio"] { width: 14px; height: 14px; }
             .time-slot { font-size: 0.65rem; }
             .afternoon-row td { font-size: 0.55rem; padding: 0.1rem 0.02rem; }
             h1 { font-size: 1.3rem; }
@@ -606,17 +613,9 @@
                 gap: 4px;
                 min-height: 32px;
             }
-            .popup-container {
-                padding: 1.2rem 1rem;
-                max-width: 95%;
-            }
-            .popup-container .popup-icon { font-size: 2.2rem; }
-            .popup-container h2 { font-size: 1.1rem; }
-            .popup-container .popup-subtitle { font-size: 0.7rem; }
-            .popup-container .popup-details .detail-row { font-size: 0.7rem; flex-direction: column; align-items: flex-start; gap: 0.1rem; }
+            .popup-container { padding: 1.5rem 1.2rem; max-height: 90vh; }
+            .popup-container .popup-details .detail-row { font-size: 0.75rem; flex-direction: column; align-items: flex-start; gap: 0.1rem; }
             .popup-container .popup-details .detail-row .value { text-align: left; max-width: 100%; }
-            .popup-container .popup-notice { font-size: 0.7rem; padding: 0.3rem 0.5rem; }
-            .popup-container .popup-whatsapp { font-size: 0.7rem; padding: 0.3rem 0.5rem; }
         }
 
         @media (max-width: 480px) {
@@ -626,7 +625,7 @@
             th:first-child { min-width: 30px; padding: 0.15rem 0.05rem; }
             td { padding: 0.15rem 0.05rem; }
             .slot-cell { height: 22px; }
-            .slot-cell input[type="radio"] { width: 10px; height: 10px; border-width: 1.5px; }
+            .slot-cell input[type="radio"] { width: 12px; height: 12px; }
             .time-slot { font-size: 0.55rem; padding: 0.05rem 0.02rem; }
             .afternoon-row td { font-size: 0.5rem; padding: 0.08rem 0.02rem; }
             .right-col .form-grid { padding: 0.5rem; gap: 0.4rem; border-radius: 4px; }
@@ -647,19 +646,15 @@
                 gap: 3px;
             }
             .selected-display .selected-text { padding: 0 0.3rem; font-size: 0.65rem; }
-            .popup-container {
-                padding: 0.8rem 0.6rem;
-                max-width: 98%;
-                border-radius: 4px;
-            }
-            .popup-container .popup-icon { font-size: 2rem; }
+            .popup-container { padding: 1rem 0.8rem; border-radius: 4px; max-height: 92vh; max-width: 95%; }
             .popup-container h2 { font-size: 1rem; }
-            .popup-container .popup-subtitle { font-size: 0.65rem; padding-bottom: 0.3rem; margin-bottom: 0.4rem; }
-            .popup-container .popup-details { padding: 0.4rem 0.6rem; }
-            .popup-container .popup-details .detail-row { font-size: 0.65rem; padding: 0.15rem 0; }
-            .popup-container .popup-notice { font-size: 0.65rem; padding: 0.2rem 0.4rem; }
-            .popup-container .popup-whatsapp { font-size: 0.65rem; padding: 0.2rem 0.4rem; }
-            .popup-container .popup-close-btn { font-size: 0.7rem; padding: 0.3rem 0.8rem; }
+            .popup-container .popup-icon { font-size: 2.5rem; }
+            .popup-container .popup-subtitle { font-size: 0.7rem; }
+            .popup-container .popup-details { padding: 0.6rem 0.8rem; }
+            .popup-container .popup-details .detail-row { font-size: 0.7rem; padding: 0.2rem 0; }
+            .popup-container .popup-notice { font-size: 0.7rem; padding: 0.4rem 0.6rem; }
+            .popup-container .popup-whatsapp { font-size: 0.7rem; padding: 0.4rem 0.6rem; }
+            .popup-container .popup-close-btn { font-size: 0.75rem; padding: 0.4rem 1rem; }
         }
     </style>
 </head>
@@ -748,7 +743,6 @@
         </div>
     </div>
 
-    <!-- ===== POPUP SIN SCROLL ===== -->
     <div class="popup-overlay" id="popupOverlay">
         <div class="popup-container">
             <div class="popup-header">
@@ -760,13 +754,13 @@
                 <div class="popup-details" id="popupDetails"></div>
                 <div class="popup-notice">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <strong>Importante:</strong> Avisa con <strong>24h</strong> de anticipación si no puedes asistir.
+                    <strong>Importante:</strong> En caso de no poder concurrir, por favor avisa con <strong>24 horas de anticipación</strong> para poder reasignar el turno.
                 </div>
                 <div class="popup-whatsapp">
                     <i class="fab fa-whatsapp"></i>
                     <div>
                         <strong>Confirmación enviada por WhatsApp</strong><br>
-                        <span>Mensaje enviado al <span class="whatsapp-number">+5493518692251</span></span>
+                        <span>Se ha enviado un mensaje con los datos al número <span class="whatsapp-number">+5493518692251</span></span>
                     </div>
                 </div>
             </div>
@@ -1240,6 +1234,25 @@
             }
         }
 
+        // ===== LIMPIAR FORMULARIO =====
+        function clearForm() {
+            nombreInput.value = '';
+            emailInput.value = '';
+            telefonoInput.value = '';
+            if (servicioSelect) servicioSelect.value = '';
+            // Desmarcar radio seleccionado
+            var selected = document.querySelector('input[name="slot"]:checked');
+            if (selected) {
+                selected.checked = false;
+                updateFeedback();
+            }
+            // Eliminar cookies del formulario
+            deleteCookie('reserva_nombre');
+            deleteCookie('reserva_email');
+            deleteCookie('reserva_telefono');
+            deleteCookie('reserva_horario');
+        }
+
         // ===== INICIALIZACIÓN =====
         async function init() {
             await loadServices();
@@ -1337,12 +1350,9 @@
                 var result = await saveReservationToFirestore(data);
 
                 if (result.success) {
-                    if (selected) {
-                        selected.checked = false;
-                        updateFeedback();
-                        deleteCookie('reserva_horario');
-                    }
-                    saveFormDataToCookies();
+                    // Limpiar formulario y cookies
+                    clearForm();
+                    // Mostrar popup (ya se limpió, pero pasamos los datos)
                     sendWhatsAppMessage(nombre, email, telefono, selected ? selected.value : fecha + ' ' + hora, servicio);
                     showConfirmationPopup(nombre, email, telefono, selected ? selected.value : fecha + ' ' + hora, servicio);
                 } else {
