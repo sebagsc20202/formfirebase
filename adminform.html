@@ -164,6 +164,8 @@
         .user-info strong { color: #d4af37; }
         .btn-config { background: #4a9eff; color: white; border: none; border-radius: 4px; padding: 0.25rem 0.8rem; cursor: pointer; font-size: 0.7rem; transition: 0.15s; }
         .btn-config:hover { background: #3a8eef; box-shadow: 0 0 8px rgba(74, 158, 255, 0.5); }
+        .btn-change-password { background: #f39c12; color: #1a1a1a; border: none; border-radius: 4px; padding: 0.25rem 0.8rem; cursor: pointer; font-size: 0.7rem; transition: 0.15s; }
+        .btn-change-password:hover { background: #e67e22; box-shadow: 0 0 8px rgba(243, 156, 18, 0.5); }
 
         @media (max-width: 768px) {
             th, td { padding: 0.2rem 0.2rem; font-size: 0.65rem; }
@@ -208,6 +210,7 @@
             <h1><i class="fas fa-user-shield"></i> Panel de Administración</h1>
             <div style="display: flex; gap: 0.3rem; align-items: center;">
                 <span class="user-info" id="userEmailDisplay">Hola, <strong>Admin</strong></span>
+                <button class="btn-change-password" onclick="openChangePasswordModal()"><i class="fas fa-key"></i> Cambiar contraseña</button>
                 <button class="btn-config" onclick="openServiceModal()"><i class="fas fa-cog"></i> Servicios</button>
                 <button class="btn btn-secondary" style="width: auto; padding: 0.25rem 0.6rem; font-size: 0.7rem; border-radius: 4px;" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i> Salir
@@ -375,6 +378,32 @@
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeRescheduleModal()">Cancelar</button>
                     <button type="submit" class="btn" id="rescheduleSubmitBtn">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL CAMBIAR CONTRASEÑA -->
+    <div class="modal-overlay" id="changePasswordModal">
+        <div class="modal-container">
+            <h2><i class="fas fa-key" style="color: #f39c12;"></i> Cambiar Contraseña</h2>
+            <div class="subtitle">Actualiza tu contraseña de acceso</div>
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Contraseña actual</label>
+                    <input type="password" id="currentPassword" placeholder="••••••••" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Nueva contraseña</label>
+                    <input type="password" id="newPassword" placeholder="Mínimo 6 caracteres" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-check-circle"></i> Confirmar nueva contraseña</label>
+                    <input type="password" id="confirmNewPassword" placeholder="Repite la contraseña" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeChangePasswordModal()">Cancelar</button>
+                    <button type="submit" class="btn" id="changePasswordSubmitBtn">Actualizar</button>
                 </div>
             </form>
         </div>
@@ -823,6 +852,85 @@
             });
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') closeRescheduleModal();
+            });
+
+            // ===== CAMBIAR CONTRASEÑA =====
+            window.openChangePasswordModal = function() {
+                document.getElementById('changePasswordModal').classList.add('show');
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmNewPassword').value = '';
+                document.getElementById('changePasswordSubmitBtn').disabled = false;
+                document.getElementById('changePasswordSubmitBtn').innerHTML = 'Actualizar';
+            };
+            window.closeChangePasswordModal = function() {
+                document.getElementById('changePasswordModal').classList.remove('show');
+            };
+
+            document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+                const submitBtn = document.getElementById('changePasswordSubmitBtn');
+
+                if (newPassword.length < 6) {
+                    alert('La nueva contraseña debe tener al menos 6 caracteres.');
+                    return;
+                }
+                if (newPassword !== confirmNewPassword) {
+                    alert('Las contraseñas no coinciden.');
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+
+                try {
+                    // Reautenticar al usuario con la contraseña actual
+                    const user = auth.currentUser;
+                    if (!user) {
+                        alert('No hay usuario autenticado. Inicia sesión nuevamente.');
+                        return;
+                    }
+                    const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+                    await user.reauthenticateWithCredential(credential);
+
+                    // Actualizar contraseña
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Actualizando...';
+                    await user.updatePassword(newPassword);
+
+                    alert('✅ Contraseña actualizada correctamente.');
+                    closeChangePasswordModal();
+                } catch (error) {
+                    console.error(error);
+                    let msg = 'Error al cambiar la contraseña. ';
+                    switch (error.code) {
+                        case 'auth/wrong-password':
+                            msg += 'La contraseña actual es incorrecta.';
+                            break;
+                        case 'auth/requires-recent-login':
+                            msg += 'La sesión ha expirado. Cierra sesión y vuelve a iniciar.';
+                            break;
+                        default:
+                            msg += error.message;
+                    }
+                    alert('❌ ' + msg);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Actualizar';
+                }
+            });
+
+            document.getElementById('changePasswordModal').addEventListener('click', function(e) {
+                if (e.target === this) closeChangePasswordModal();
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeChangePasswordModal();
+                    closeRescheduleModal();
+                    closeServiceModal();
+                }
             });
 
             // ===== CONFIGURACIÓN DE SERVICIOS =====
